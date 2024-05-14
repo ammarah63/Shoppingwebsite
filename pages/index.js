@@ -1,11 +1,11 @@
 import React from "react";
-// import { ProductCard, Slider } from "./components";
+import { ProductCard, Slider } from "./components";
+
 
 const Home = (props) => {
   return (
     <div>
-      Home
-      {/* <div>
+      <div>
         <Slider />
       </div>
       <div className="m-2 mb-20 ">
@@ -17,7 +17,8 @@ const Home = (props) => {
         <ProductCard />
         <ProductCard />
         <ProductCard />
-      </div> */}
+      
+      </div>
     </div>
   );
 };
