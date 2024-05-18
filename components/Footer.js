@@ -9,10 +9,10 @@ const Footer=(props)=> {
             <Link href="/" className="link link-hover">
               Home
             </Link>
-            <Link href="/server/shop" className="link link-hover">
+            <Link href="/Shop/shop" className="link link-hover">
               Shop
             </Link>
-            <Link href="/server/sale" className="link link-hover">
+            <Link href="/Sale/sale" className="link link-hover">
               Sale
             </Link>
           </nav>
