@@ -4,8 +4,8 @@ import product1 from "../public/assets/product1.jpg";
 import Image from "next/image";
 import Link from "next/link";
 import { FaShoppingCart } from "react-icons/fa";
-import { addselectedProduct } from "../pages/redux/slices/productSlice";
-import { addcartProducts } from "../pages/redux/slices/cartSlice";
+import { addselectedProduct } from "../redux/slices/productSlice";
+import { addcartProducts } from "../redux/slices/cartSlice";
 import { useDispatch } from "react-redux";
 import Toast from "./Toast";
 

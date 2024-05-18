@@ -1,6 +1,6 @@
 import "@/styles/globals.css";
 import { Footer, Header } from "@/components";
-import { Providers } from "./redux/providers";
+import { Providers } from "@/redux/providers";
 
 export default function App({ Component, pageProps }) {
   return (
