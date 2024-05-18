@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import React from 'react';
 
 const Footer=(props)=> {
@@ -5,9 +6,15 @@ const Footer=(props)=> {
       <div>
         <footer className="footer footer-center mt-20 p-10 bg-neutral text-neutral-content rounded">
           <nav className="grid grid-flow-col gap-4">
-            <a className="link link-hover">Home</a>
-            <a className="link link-hover">Shop</a>
-            <a className="link link-hover">Sale</a>
+            <Link href="/" className="link link-hover">
+              Home
+            </Link>
+            <Link href="/server/shop" className="link link-hover">
+              Shop
+            </Link>
+            <Link href="/server/sale" className="link link-hover">
+              Sale
+            </Link>
           </nav>
           <nav>
             <div className="grid grid-flow-col gap-4">

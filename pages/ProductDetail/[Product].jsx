@@ -1,78 +1,163 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { FaShoppingCart } from "react-icons/fa";
-import { ProductCard } from "../components";
+import { ProductCard, Toast } from "../../components";
 import { useRouter } from "next/router";
-
+import { useSelector, useDispatch } from "react-redux";
+import { addcartProducts } from "../redux/slices/cartSlice";
 
 const ProductDetail = (props) => {
-   const router = useRouter();
-   const {
-     productID,
-     productTitle,
-     productImage,
-     productDescription,
-     productPrice,
-   } = router.query;
+  const router = useRouter();
+  const dispatch = useDispatch();
+  const productData = useSelector((data) => data.productData.selectedProduct);
+  const { productID, productTitle } = router.query;
+  const [showToast, setShowToast] = useState(false);
+  const { products } = props.data || { products: [] };
+
+  const AddToCart = () => {
+     const productID = productData.productID;
+     const productTitle = productData.productTitle;
+     const productImage = productData.productImage;
+     const productDescription = productData.productDescription;
+     const productPrice = productData.productPrice;
+     const productRating = productData.productRating;
+     const productBrand = productData.productBrand;
+     const productDiscount = productData.productDiscount;
+     const productStock = productData.productStock;
+     const productImages = productData.productImages;
+     const productCategory = productData.productCategory;
+     dispatch(
+       addcartProducts({
+         productID,
+         productTitle,
+         productImage,
+         productDescription,
+         productPrice,
+         productRating,
+         productBrand,
+         productDiscount,
+         productStock,
+         productImages,
+         productCategory,
+       })
+     );
+   // dispatch(addcartProducts(productData));
+    setShowToast(true);
+    setTimeout(() => {
+      setShowToast(false);
+    }, 3000);
+  };
+
+  const renderStars = (rating) => {
+    const filledStars = Math.floor(rating);
+    const halfStar = rating - filledStars >= 0.5 ? 1 : 0;
+    const emptyStars = 5 - filledStars - halfStar;
+
+    const stars = [];
+
+    for (let i = 0; i < filledStars; i++) {
+      stars.push(
+        <svg
+          key={`filled-${i}`}
+          className="w-6 h-6 text-yellow-300"
+          aria-hidden="true"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="currentColor"
+          viewBox="0 0 22 20"
+        >
+          <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+        </svg>
+      );
+    }
+
+    if (halfStar) {
+      stars.push(
+        <svg
+          key={`half`}
+          className="w-6 h-6 text-yellow-300"
+          aria-hidden="true"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="currentColor"
+          viewBox="0 0 22 20"
+        >
+          <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+        </svg>
+      );
+    }
+
+    for (let i = 0; i < emptyStars; i++) {
+      stars.push(
+        <svg
+          key={`empty-${i}`}
+          className="w-6 h-6 text-gray-300 dark:text-gray-500"
+          aria-hidden="true"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="currentColor"
+          viewBox="0 0 22 20"
+        >
+          <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+        </svg>
+      );
+    }
+
+    return stars;
+  };
+
+  useEffect(() => {
+    console.log(productData);
+  }, [productData]);
+
   return (
     <div>
-      <div class="grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 gap-4">
+      <div className="grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 gap-4">
         <div className="p-10">
-          <div class="grid gap-4">
+          <div className="grid gap-4">
             <div>
               <img
-                class="h-auto max-w-full rounded-lg"
-                src="https://flowbite.s3.amazonaws.com/docs/gallery/featured/image.jpg"
+                className="h-auto max-w-full rounded-lg"
+                src={productData.productImage}
                 alt=""
               />
             </div>
-            <div class="grid grid-cols-5 gap-4">
-              <div>
-                <img
-                  class="h-auto max-w-full rounded-lg"
-                  src="https://flowbite.s3.amazonaws.com/docs/gallery/square/image-1.jpg"
-                  alt=""
-                />
-              </div>
-              <div>
-                <img
-                  class="h-auto max-w-full rounded-lg"
-                  src="https://flowbite.s3.amazonaws.com/docs/gallery/square/image-2.jpg"
-                  alt=""
-                />
-              </div>
-              <div>
-                <img
-                  class="h-auto max-w-full rounded-lg"
-                  src="https://flowbite.s3.amazonaws.com/docs/gallery/square/image-3.jpg"
-                  alt=""
-                />
-              </div>
-              <div>
-                <img
-                  class="h-auto max-w-full rounded-lg"
-                  src="https://flowbite.s3.amazonaws.com/docs/gallery/square/image-4.jpg"
-                  alt=""
-                />
-              </div>
-              <div>
-                <img
-                  class="h-auto max-w-full rounded-lg"
-                  src="https://flowbite.s3.amazonaws.com/docs/gallery/square/image-5.jpg"
-                  alt=""
-                />
-              </div>
+            <div className="grid grid-cols-5 gap-4">
+              {productData.productImages.map((image) => (
+                <div key={image}>
+                  <img
+                    className="h-auto max-w-full rounded-lg"
+                    src={image}
+                    alt=""
+                  />
+                </div>
+              ))}
             </div>
           </div>
         </div>
         <div className="p-10">
           <div className="flex">
-            <h2 class="text-2xl font-bold flex-1">{productTitle}</h2>
-            <h2 class="text-2xl font-semibold justify-end">{productPrice}</h2>
+            <h2 className="text-2xl font-bold flex-1">
+              {productData.productTitle}
+            </h2>
+            <h2 className="text-2xl font-semibold justify-end">
+              {" "}
+              {productData.productDiscount ? (
+                <p>
+                  <span className="line-through decoration-red-500">
+                    {productData.productPrice} $
+                  </span>{" "}
+                  {`$${(
+                    productData.productPrice -
+                    (productData.productPrice * productData.productDiscount) /
+                      100
+                  ).toFixed(2)}`}{" "}
+                </p>
+              ) : (
+                <p>{productData.productPrice} $$</p>
+              )}
+            </h2>
           </div>
           <div className="my-5">
-            <div class="flex items-center">
+            <div className="flex items-center">
               <svg
-                class="w-6 h-6 text-yellow-300 me-1"
+                className="w-6 h-6 text-yellow-300 me-1"
                 aria-hidden="true"
                 xmlns="http://www.w3.org/2000/svg"
                 fill="currentColor"
@@ -81,7 +166,7 @@ const ProductDetail = (props) => {
                 <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
               </svg>
               <svg
-                class="w-6 h-6 text-yellow-300 me-1"
+                className="w-6 h-6 text-yellow-300 me-1"
                 aria-hidden="true"
                 xmlns="http://www.w3.org/2000/svg"
                 fill="currentColor"
@@ -90,7 +175,7 @@ const ProductDetail = (props) => {
                 <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
               </svg>
               <svg
-                class="w-6 h-6 text-yellow-300 me-1"
+                className="w-6 h-6 text-yellow-300 me-1"
                 aria-hidden="true"
                 xmlns="http://www.w3.org/2000/svg"
                 fill="currentColor"
@@ -99,7 +184,7 @@ const ProductDetail = (props) => {
                 <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
               </svg>
               <svg
-                class="w-6 h-6 text-yellow-300 me-1"
+                className="w-6 h-6 text-yellow-300 me-1"
                 aria-hidden="true"
                 xmlns="http://www.w3.org/2000/svg"
                 fill="currentColor"
@@ -108,7 +193,7 @@ const ProductDetail = (props) => {
                 <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
               </svg>
               <svg
-                class="w-6 h-6 text-gray-300 me-1 dark:text-gray-500"
+                className="w-6 h-6 text-gray-300 me-1 dark:text-gray-500"
                 aria-hidden="true"
                 xmlns="http://www.w3.org/2000/svg"
                 fill="currentColor"
@@ -116,24 +201,33 @@ const ProductDetail = (props) => {
               >
                 <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
               </svg>
-              <p class="ms-1 text-sm font-medium text-gray-500 dark:text-gray-400">
+              <p className="ms-1 text-sm font-medium text-gray-500 dark:text-gray-400">
                 4.95
               </p>
-              <p class="ms-1 text-sm font-medium text-gray-500 dark:text-gray-400">
+              <p className="ms-1 text-sm font-medium text-gray-500 dark:text-gray-400">
                 out of
               </p>
-              <p class="ms-1 text-sm font-medium text-gray-500 dark:text-gray-400">
+              <p className="ms-1 text-sm font-medium text-gray-500 dark:text-gray-400">
                 5
               </p>
             </div>
           </div>
           <div className="my-5">
-            <h2 class="text-2xl font-bold">Description</h2>
-            <p>{productDescription}</p>
+            <h2 className="text-2xl font-bold">Description</h2>
+            <p>{productData.productDescription}</p>
+          </div>
+          <div className="flex">
+            <h2 className="text-lg font-bold flex-1">
+              Category: {productData.productCategory}
+            </h2>
+            <h2 className="text-lg font-semibold justify-end">
+              {" "}
+              Brand: {productData.productBrand}
+            </h2>
           </div>
           <div>
             {" "}
-            <h2 class="text-2xl font-bold">Color</h2>
+            <h2 className="text-2xl font-bold">Color</h2>
             <button className="btn btn-circle  m-3 btn-primary"></button>
             <button className="btn btn-circle  m-3 btn-secondary"></button>
             <button className="btn btn-circle  m-3 btn-neutral"></button>
@@ -141,7 +235,7 @@ const ProductDetail = (props) => {
             <button className="btn btn-circle  m-3 btn-success"></button>
           </div>
           <div>
-            <h2 class="text-2xl font-bold">Size</h2>
+            <h2 className="text-2xl font-bold">Size</h2>
             <button className="btn btn-secondary m-3 w-20">XL</button>
             <button className="btn btn-secondary m-3 w-20">L</button>
             <button className="btn btn-secondary m-3 w-20">MD</button>
@@ -149,7 +243,7 @@ const ProductDetail = (props) => {
             <button className="btn btn-secondary m-3 w-20">XS</button>
           </div>
           <div className="my-5">
-            <button className="btn  btn-neutral m-3 w-full">
+            <button className="btn  btn-neutral m-3 w-full" onClick={AddToCart}>
               {" "}
               <FaShoppingCart fontSize={20} /> Add to Cart
             </button>
@@ -157,21 +251,23 @@ const ProductDetail = (props) => {
         </div>
       </div>
       <div className="p-10">
-        <h1 class="text-4xl font-bold text-left">
-          <span class="bg-neutral text-neutral-content">Product Reviews</span>
+        <h1 className="text-4xl font-bold text-left">
+          <span className="bg-neutral text-neutral-content">
+            Product Reviews
+          </span>
         </h1>
         <div className="h-80 overflow-y-scroll my-10">
-          <div class="py-10 grid grid-cols-3 gap-1 ">
-            <div class="bg-gray-200 p-4 col-span-1">
+          <div className="py-10 grid grid-cols-3 gap-1 ">
+            <div className="bg-gray-200 p-4 col-span-1">
               <h6 className="font-bold text-lg">User Name</h6>
               <p>20/12/2023</p>
             </div>
-            <div class="bg-gray-300 p-4 col-span-2">
+            <div className="bg-gray-300 p-4 col-span-2">
               {" "}
               <div className="my-5">
-                <div class="flex items-center">
+                <div className="flex items-center">
                   <svg
-                    class="w-6 h-6 text-yellow-300 me-1"
+                    className="w-6 h-6 text-yellow-300 me-1"
                     aria-hidden="true"
                     xmlns="http://www.w3.org/2000/svg"
                     fill="currentColor"
@@ -180,7 +276,7 @@ const ProductDetail = (props) => {
                     <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
                   </svg>
                   <svg
-                    class="w-6 h-6 text-yellow-300 me-1"
+                    className="w-6 h-6 text-yellow-300 me-1"
                     aria-hidden="true"
                     xmlns="http://www.w3.org/2000/svg"
                     fill="currentColor"
@@ -189,7 +285,7 @@ const ProductDetail = (props) => {
                     <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
                   </svg>
                   <svg
-                    class="w-6 h-6 text-yellow-300 me-1"
+                    className="w-6 h-6 text-yellow-300 me-1"
                     aria-hidden="true"
                     xmlns="http://www.w3.org/2000/svg"
                     fill="currentColor"
@@ -198,7 +294,7 @@ const ProductDetail = (props) => {
                     <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
                   </svg>
                   <svg
-                    class="w-6 h-6 text-yellow-300 me-1"
+                    className="w-6 h-6 text-yellow-300 me-1"
                     aria-hidden="true"
                     xmlns="http://www.w3.org/2000/svg"
                     fill="currentColor"
@@ -207,7 +303,7 @@ const ProductDetail = (props) => {
                     <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
                   </svg>
                   <svg
-                    class="w-6 h-6 text-gray-300 me-1 dark:text-gray-500"
+                    className="w-6 h-6 text-gray-300 me-1 dark:text-gray-500"
                     aria-hidden="true"
                     xmlns="http://www.w3.org/2000/svg"
                     fill="currentColor"
@@ -215,13 +311,13 @@ const ProductDetail = (props) => {
                   >
                     <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
                   </svg>
-                  <p class="ms-1 text-sm font-medium text-gray-500 dark:text-gray-400">
+                  <p className="ms-1 text-sm font-medium text-gray-500 dark:text-gray-400">
                     4.95
                   </p>
-                  <p class="ms-1 text-sm font-medium text-gray-500 dark:text-gray-400">
+                  <p className="ms-1 text-sm font-medium text-gray-500 dark:text-gray-400">
                     out of
                   </p>
-                  <p class="ms-1 text-sm font-medium text-gray-500 dark:text-gray-400">
+                  <p className="ms-1 text-sm font-medium text-gray-500 dark:text-gray-400">
                     5
                   </p>
                 </div>
@@ -233,16 +329,16 @@ const ProductDetail = (props) => {
                 of type and scrambled it to make a type specimen book.
               </p>
             </div>
-            <div class="bg-gray-200 p-4 col-span-1">
+            <div className="bg-gray-200 p-4 col-span-1">
               <h6 className="font-bold text-lg">User Name</h6>
               <p>20/12/2023</p>
             </div>
-            <div class="bg-gray-300 p-4 col-span-2">
+            <div className="bg-gray-300 p-4 col-span-2">
               {" "}
               <div className="my-5">
-                <div class="flex items-center">
+                <div className="flex items-center">
                   <svg
-                    class="w-6 h-6 text-yellow-300 me-1"
+                    className="w-6 h-6 text-yellow-300 me-1"
                     aria-hidden="true"
                     xmlns="http://www.w3.org/2000/svg"
                     fill="currentColor"
@@ -251,7 +347,7 @@ const ProductDetail = (props) => {
                     <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
                   </svg>
                   <svg
-                    class="w-6 h-6 text-yellow-300 me-1"
+                    className="w-6 h-6 text-yellow-300 me-1"
                     aria-hidden="true"
                     xmlns="http://www.w3.org/2000/svg"
                     fill="currentColor"
@@ -260,7 +356,7 @@ const ProductDetail = (props) => {
                     <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
                   </svg>
                   <svg
-                    class="w-6 h-6 text-yellow-300 me-1"
+                    className="w-6 h-6 text-yellow-300 me-1"
                     aria-hidden="true"
                     xmlns="http://www.w3.org/2000/svg"
                     fill="currentColor"
@@ -269,7 +365,7 @@ const ProductDetail = (props) => {
                     <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
                   </svg>
                   <svg
-                    class="w-6 h-6 text-yellow-300 me-1"
+                    className="w-6 h-6 text-yellow-300 me-1"
                     aria-hidden="true"
                     xmlns="http://www.w3.org/2000/svg"
                     fill="currentColor"
@@ -278,7 +374,7 @@ const ProductDetail = (props) => {
                     <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
                   </svg>
                   <svg
-                    class="w-6 h-6 text-gray-300 me-1 dark:text-gray-500"
+                    className="w-6 h-6 text-gray-300 me-1 dark:text-gray-500"
                     aria-hidden="true"
                     xmlns="http://www.w3.org/2000/svg"
                     fill="currentColor"
@@ -286,13 +382,13 @@ const ProductDetail = (props) => {
                   >
                     <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
                   </svg>
-                  <p class="ms-1 text-sm font-medium text-gray-500 dark:text-gray-400">
+                  <p className="ms-1 text-sm font-medium text-gray-500 dark:text-gray-400">
                     4.95
                   </p>
-                  <p class="ms-1 text-sm font-medium text-gray-500 dark:text-gray-400">
+                  <p className="ms-1 text-sm font-medium text-gray-500 dark:text-gray-400">
                     out of
                   </p>
-                  <p class="ms-1 text-sm font-medium text-gray-500 dark:text-gray-400">
+                  <p className="ms-1 text-sm font-medium text-gray-500 dark:text-gray-400">
                     5
                   </p>
                 </div>
@@ -304,16 +400,16 @@ const ProductDetail = (props) => {
                 of type and scrambled it to make a type specimen book.
               </p>
             </div>{" "}
-            <div class="bg-gray-200 p-4 col-span-1">
+            <div className="bg-gray-200 p-4 col-span-1">
               <h6 className="font-bold text-lg">User Name</h6>
               <p>20/12/2023</p>
             </div>
-            <div class="bg-gray-300 p-4 col-span-2">
+            <div className="bg-gray-300 p-4 col-span-2">
               {" "}
               <div className="my-5">
-                <div class="flex items-center">
+                <div className="flex items-center">
                   <svg
-                    class="w-6 h-6 text-yellow-300 me-1"
+                    className="w-6 h-6 text-yellow-300 me-1"
                     aria-hidden="true"
                     xmlns="http://www.w3.org/2000/svg"
                     fill="currentColor"
@@ -322,7 +418,7 @@ const ProductDetail = (props) => {
                     <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
                   </svg>
                   <svg
-                    class="w-6 h-6 text-yellow-300 me-1"
+                    className="w-6 h-6 text-yellow-300 me-1"
                     aria-hidden="true"
                     xmlns="http://www.w3.org/2000/svg"
                     fill="currentColor"
@@ -331,7 +427,7 @@ const ProductDetail = (props) => {
                     <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
                   </svg>
                   <svg
-                    class="w-6 h-6 text-yellow-300 me-1"
+                    className="w-6 h-6 text-yellow-300 me-1"
                     aria-hidden="true"
                     xmlns="http://www.w3.org/2000/svg"
                     fill="currentColor"
@@ -340,7 +436,7 @@ const ProductDetail = (props) => {
                     <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
                   </svg>
                   <svg
-                    class="w-6 h-6 text-yellow-300 me-1"
+                    className="w-6 h-6 text-yellow-300 me-1"
                     aria-hidden="true"
                     xmlns="http://www.w3.org/2000/svg"
                     fill="currentColor"
@@ -349,7 +445,7 @@ const ProductDetail = (props) => {
                     <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
                   </svg>
                   <svg
-                    class="w-6 h-6 text-gray-300 me-1 dark:text-gray-500"
+                    className="w-6 h-6 text-gray-300 me-1 dark:text-gray-500"
                     aria-hidden="true"
                     xmlns="http://www.w3.org/2000/svg"
                     fill="currentColor"
@@ -357,13 +453,13 @@ const ProductDetail = (props) => {
                   >
                     <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
                   </svg>
-                  <p class="ms-1 text-sm font-medium text-gray-500 dark:text-gray-400">
+                  <p className="ms-1 text-sm font-medium text-gray-500 dark:text-gray-400">
                     4.95
                   </p>
-                  <p class="ms-1 text-sm font-medium text-gray-500 dark:text-gray-400">
+                  <p className="ms-1 text-sm font-medium text-gray-500 dark:text-gray-400">
                     out of
                   </p>
-                  <p class="ms-1 text-sm font-medium text-gray-500 dark:text-gray-400">
+                  <p className="ms-1 text-sm font-medium text-gray-500 dark:text-gray-400">
                     5
                   </p>
                 </div>
@@ -380,19 +476,46 @@ const ProductDetail = (props) => {
       </div>
       <div>
         <div className="m-30 px-20 py-10">
-          <h1 class="text-4xl font-bold text-center">
-            <span class="bg-neutral text-neutral-content me-3">People</span>
+          <h1 className="text-4xl font-bold text-center">
+            <span className="bg-neutral text-neutral-content me-3">People</span>
             also Purchased
           </h1>
-          <div className="py-10 px-20 grid lg:grid-cols-3 md:grid-cols-3 sm:grid-cols-2 gap-4 mb-4">
-            <ProductCard />
-            <ProductCard />
-            <ProductCard />
+          <div className=" grid lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 gap-4 mb-4">
+            {products.map((product, index) => (
+              <div key={index}>
+                {product.category == "smartphones" && (
+                  <ProductCard
+                    productDescription={product.description}
+                    productImage={product.thumbnail}
+                    productTitle={product.title}
+                    productPrice={product.price}
+                    productID={product.id}
+                    productDiscount={product.discountPercentage}
+                    productRating={product.rating}
+                    productBrand={product.brand}
+                    productCategory={product.category}
+                    productStock={product.stock}
+                    productImages={product.images}
+                  />
+                )}
+              </div>
+            ))}
           </div>
         </div>
       </div>
+      {showToast && <Toast />}
     </div>
   );
 };
 
 export default ProductDetail;
+
+export async function getServerSideProps() {
+  const res = await fetch("https://dummyjson.com/products");
+  const data = await res.json();
+  return {
+    props: {
+      data,
+    },
+  };
+}

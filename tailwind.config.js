@@ -7,6 +7,9 @@ module.exports = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ["Lato", "sans-serif"],
+      },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
         "gradient-conic":
@@ -14,9 +17,7 @@ module.exports = {
       },
     },
   },
-  plugins: [require("daisyui")
-    
-  ],
+  plugins: [require("daisyui")],
   daisyui: {
     themes: ["winter"],
   },

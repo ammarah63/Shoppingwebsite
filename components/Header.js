@@ -1,13 +1,28 @@
+"use client";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import React from "react";
 import {
   FaFacebookSquare,
   FaInstagramSquare,
   FaShoppingCart,
 } from "react-icons/fa";
 import { FaSquareXTwitter } from "react-icons/fa6";
+import { useSelector } from "react-redux";
 
 const Header = () => {
+  const [cartNo, setCartNo] = useState(0);
+  const productData = useSelector((data) => data.cartData.cartProducts);
+
+  useEffect(() => {
+    // Create a Set to store unique product IDs
+    const uniqueProductIDs = new Set();
+    productData.forEach((product) => {
+      uniqueProductIDs.add(product.data.productID);
+    });
+    // Set the cart number to the size of the Set
+    setCartNo(uniqueProductIDs.size);
+  }, [productData]);
+
   return (
     <>
       <div className="navbar bg-neutral text-neutral-content">
@@ -18,7 +33,7 @@ const Header = () => {
         </div>
         <div className="navbar-center hidden lg:flex">
           <p className="text-sm font-bold">
-            Shipping Worldwide | Free shipping over 5000Rs purchase
+            Shipping Worldwide | Free shipping over 500$ purchase
           </p>
         </div>
         <div className="navbar-end">
@@ -64,7 +79,7 @@ const Header = () => {
                 <Link href="/server/shop">Shop</Link>
               </li>
               <li>
-                <Link href="/Sale">Sale</Link>
+                <Link href="/server/sale">Sale</Link>
               </li>
             </ul>
           </div>
@@ -72,21 +87,33 @@ const Header = () => {
         <div className="navbar-center hidden lg:flex">
           <ul className="menu menu-horizontal px-1">
             <li>
-              <Link href="/">Home</Link>
+              <Link href="/" className="link link-hover">
+                Home
+              </Link>
             </li>
             <li>
-              <Link href="/server/shop">Shop</Link>
+              <Link href="/Shop/shop" className="link link-hover">
+                Shop
+              </Link>
             </li>
             <li>
-              <Link href="/Sale">Sale</Link>
+              <Link href="/Sale/sale" className="link link-hover">
+                Sale
+              </Link>
             </li>
           </ul>
         </div>
         <div className="navbar-end">
-          {" "}
-          <button className="btn-sm m-1 me-5 ">
-            <FaShoppingCart fontSize={20} />
-          </button>
+          <Link href="/Cart">
+            <button className="btn-sm m-1 me-5 relative">
+              <div className="top-0 absolute left-10 right-0">
+                <p className="flex h-1 w-1 items-center justify-center rounded-full bg-red-500 p-3 text-xs text-white">
+                  {cartNo}
+                </p>
+              </div>
+              <FaShoppingCart fontSize={30} className="mt-4" />
+            </button>
+          </Link>
         </div>
       </div>
     </>
