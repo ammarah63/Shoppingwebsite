@@ -150,9 +150,11 @@ const Cart = (props) => {
                     return (
                       <tr className="bg-base-200" key={productID}>
                         <th>
-                          <img
+                          <Image
                             src={product.productImage}
                             alt="Watch"
+                            width={50}
+                            height={50}
                             className="object-cover h-[70px] w-[70px]"
                           />
                         </th>
