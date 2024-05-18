@@ -5,7 +5,7 @@ import {
   removecartProducts,
   updateProductQuantity,
   addcartProducts,
-} from "../redux/slices/cartSlice";
+} from "@/redux/slices/cartSlice";
 import { useSelector, useDispatch } from "react-redux";
 
 const Cart = (props) => {

@@ -3,7 +3,7 @@ import { FaShoppingCart } from "react-icons/fa";
 import { ProductCard, Toast } from "../../components";
 import { useRouter } from "next/router";
 import { useSelector, useDispatch } from "react-redux";
-import { addcartProducts } from "../redux/slices/cartSlice";
+import { addcartProducts } from "@/redux/slices/cartSlice";
 
 const ProductDetail = (props) => {
   const router = useRouter();
