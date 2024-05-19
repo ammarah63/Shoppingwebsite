@@ -11,6 +11,7 @@ const ProductDetail = (props) => {
   const productData = useSelector((data) => data.productData.selectedProduct);
   const { productID, productTitle } = router.query;
   const [showToast, setShowToast] = useState(false);
+  const [quantity, setQuantity] = useState(1);
   const { products } = props.data || { products: [] };
 
   const AddToCart = () => {
@@ -38,6 +39,7 @@ const ProductDetail = (props) => {
          productStock,
          productImages,
          productCategory,
+         quantity,
        })
      );
    // dispatch(addcartProducts(productData));

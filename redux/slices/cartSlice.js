@@ -17,14 +17,17 @@ const cartSlice = createSlice({
   reducers: {
     addcartProducts: (state, action) => {
       console.log("action", action);
-      const productID = action.payload.productID;
-      const existingProduct = state.cartProducts.find(
-        (p) => p.productID === productID
+      const productIDs = action.payload.productID;
+      console.log(productIDs);
+      console.log("Update state:", JSON.parse(JSON.stringify(state)));
+      let existingProduct = state.cartProducts.find(
+        (p) => p.data.productID === productIDs
       );
       console.log("existingProduct", existingProduct);
       if (existingProduct) {
-        existingProduct.quantity += 1;
+        existingProduct.data.quantity += 1;
       } else {
+        console.log(`Product with ID ${productIDs} not found in cart.`);
         const data = {
           productID: action.payload.productID,
           productTitle: action.payload.productTitle,
@@ -60,30 +63,21 @@ const cartSlice = createSlice({
       );
     },
     updateProductQuantity: (state, action) => {
-      const productID = action.payload.productID;
-      console.log(
-        "Current state:",
-        JSON.parse(JSON.stringify(state.cartProducts))
+      console.log("action", action);
+      const productIDs = action.payload;
+      console.log(productIDs);
+      console.log("Update state:", JSON.parse(JSON.stringify(state)));
+      let existingProduct = state.cartProducts.find(
+        (p) => p.data.productID === productIDs
       );
-      const existingProduct = state.cartProducts.find(
-        (p) => p.productID === productID
-      );
-
+      console.log("existingProduct", existingProduct);
       if (existingProduct) {
-        existingProduct.quantity -= 1;
-        if (existingProduct.quantity === 0) {
-          // Remove the product if quantity becomes zero
-          state.cartProducts = state.cartProducts.filter(
-            (p) => p.productID !== productID
-          );
-        }
+        console.log("id found");
+        existingProduct.data.quantity -= 1;
+        console.log("Update state2:", JSON.parse(JSON.stringify(state)));
       } else {
-        console.log(`Product with ID ${productID} not found in cart.`);
+        console.log("id not found");
       }
-      console.log(
-        "Update state:",
-        JSON.parse(JSON.stringify(state.cartProducts))
-      );
     },
   },
 });

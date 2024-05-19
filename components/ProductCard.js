@@ -24,6 +24,7 @@ const ProductCard = ({
 }) => {
   const dispatch = useDispatch();
   const [cartProducts, setCartProducts] = useState();
+  const [quantity, setQuantity] = useState(1);
   const [showToast, setShowToast] = useState(false);
   const handleSeeDetailsClick = () => {
     dispatch(
@@ -58,6 +59,7 @@ const ProductCard = ({
         productStock,
         productImages,
         productCategory,
+        quantity,
       })
     );
     setShowToast(true);
@@ -115,11 +117,7 @@ const ProductCard = ({
                 See Details
               </button>
             </Link>
-            <a
-              
-              onClick={AddToCart}
-               className="btn btn-active btn-sm w-full"
-            >
+            <a onClick={AddToCart} className="btn btn-active btn-sm w-full">
               <button className="btn btn-active btn-xs">
                 <FaShoppingCart fontSize={20} onClick={AddToCart} />
                 Add to Cart

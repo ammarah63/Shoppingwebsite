@@ -11,7 +11,6 @@ import { useSelector, useDispatch } from "react-redux";
 const Cart = (props) => {
   const productData = useSelector((data) => data.cartData.cartProducts);
   const [products, setProducts] = useState({});
-  const [cart, setCart] = useState([]);
   const [subtotal, setSubtotal] = useState(0);
   const [shipping, setShipping] = useState(0);
   const dispatch = useDispatch();
@@ -26,14 +25,10 @@ const Cart = (props) => {
     let totalPrice = 0;
 
     productData.forEach((product) => {
-      const { productID, productPrice } = product.data;
-      const price = productPrice;
+      const { productID, productPrice, quantity } = product.data;
+      const price = productPrice * quantity;
 
-      if (productsObj[productID]) {
-        productsObj[productID].quantity += 1;
-      } else {
-        productsObj[productID] = { ...product.data, quantity: 1 };
-      }
+      productsObj[productID] = { ...product.data, quantity };
       totalPrice += price;
     });
 
@@ -47,6 +42,7 @@ const Cart = (props) => {
     updatedProducts[productIDs].quantity += 1;
     setProducts(updatedProducts);
     updateSubtotal(updatedProducts);
+
     const productID = updatedProducts[productIDs].productID;
     const productTitle = updatedProducts[productIDs].productTitle;
     const productImage = updatedProducts[productIDs].productImage;
@@ -81,34 +77,35 @@ const Cart = (props) => {
       updatedProducts[productIDs].quantity -= 1;
       setProducts(updatedProducts);
       updateSubtotal(updatedProducts);
+
+      const quantity = updatedProducts[productIDs].quantity;
+      const productID = updatedProducts[productIDs].productID;
+      const productTitle = updatedProducts[productIDs].productTitle;
+      const productImage = updatedProducts[productIDs].productImage;
+      const productDescription = updatedProducts[productIDs].productDescription;
+      const productPrice = updatedProducts[productIDs].productPrice;
+      const productRating = updatedProducts[productIDs].productRating;
+      const productBrand = updatedProducts[productIDs].productBrand;
+      const productDiscount = updatedProducts[productIDs].productDiscount;
+      const productStock = updatedProducts[productIDs].productStock;
+      const productImages = updatedProducts[productIDs].productImages;
+      const productCategory = updatedProducts[productIDs].productCategory;
+      dispatch(
+        updateProductQuantity(
+          productID
+          // productTitle,
+          // productImage,
+          // productDescription,
+          // productPrice,
+          // productRating,
+          // productBrand,
+          // productDiscount,
+          // productStock,
+          // productImages,
+          // productCategory,
+        )
+      );
     }
-    const quantity = updatedProducts[productIDs].quantity;
-    const productID = updatedProducts[productIDs].productID;
-    const productTitle = updatedProducts[productIDs].productTitle;
-    const productImage = updatedProducts[productIDs].productImage;
-    const productDescription = updatedProducts[productIDs].productDescription;
-    const productPrice = updatedProducts[productIDs].productPrice;
-    const productRating = updatedProducts[productIDs].productRating;
-    const productBrand = updatedProducts[productIDs].productBrand;
-    const productDiscount = updatedProducts[productIDs].productDiscount;
-    const productStock = updatedProducts[productIDs].productStock;
-    const productImages = updatedProducts[productIDs].productImages;
-    const productCategory = updatedProducts[productIDs].productCategory;
-    dispatch(
-      updateProductQuantity(
-        productID,
-        // productTitle,
-        // productImage,
-        // productDescription,
-        // productPrice,
-        // productRating,
-        // productBrand,
-        // productDiscount,
-        // productStock,
-        // productImages,
-        // productCategory,
-      )
-    );
   };
 
   const updateSubtotal = (updatedProducts) => {
@@ -119,6 +116,7 @@ const Cart = (props) => {
     setSubtotal(totalPrice);
     setShipping(totalPrice >= 500 ? 0 : 50);
   };
+
   return (
     <div>
       <div className="flex items-center justify-center m-2 mb-10 mt-10">
@@ -152,7 +150,7 @@ const Cart = (props) => {
                         <th>
                           <Image
                             src={product.productImage}
-                            alt="Watch"
+                            alt="Product"
                             width={50}
                             height={50}
                             className="object-cover h-[70px] w-[70px]"
@@ -192,13 +190,8 @@ const Cart = (props) => {
                             </div>
                           </form>
                         </td>
-
                         <td>
-                          <a
-                            onClick={() =>
-                              handleRemoveProduct(product.productID)
-                            }
-                          >
+                          <a onClick={() => handleRemoveProduct(productID)}>
                             <button className="btn btn-circle">
                               <svg
                                 xmlns="http://www.w3.org/2000/svg"
