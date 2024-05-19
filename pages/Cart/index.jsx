@@ -191,7 +191,11 @@ const Cart = (props) => {
                           </form>
                         </td>
                         <td>
-                          <a onClick={() => handleRemoveProduct(productID)}>
+                          <a
+                            onClick={() =>
+                              handleRemoveProduct(product.productID)
+                            }
+                          >
                             <button className="btn btn-circle">
                               <svg
                                 xmlns="http://www.w3.org/2000/svg"
