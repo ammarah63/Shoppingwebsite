@@ -8,7 +8,7 @@ import { addcartProducts } from "@/redux/slices/cartSlice";
 const ProductDetail = (props) => {
   const router = useRouter();
   const dispatch = useDispatch();
-  const productData = useSelector((data) => data.productData.selectedProduct);
+  const productData = useSelector((state) => state.product.selectedProduct);
   const { productID, productTitle } = router.query;
   const [showToast, setShowToast] = useState(false);
   const [quantity, setQuantity] = useState(1);

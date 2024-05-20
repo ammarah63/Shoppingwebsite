@@ -1,18 +1,11 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { ProductCard } from "@/components";
+import { useRouter } from "next/router";
 
 const usePagination = (itemsPerPage, items) => {
-  const [currentPage, setCurrentPage] = React.useState(1);
+  const [currentPage, setCurrentPage] = useState(1);
 
   const totalPages = Math.ceil(items.length / itemsPerPage);
-
-  const nextPage = () => {
-    setCurrentPage((prevPage) => Math.min(prevPage + 1, totalPages));
-  };
-
-  const prevPage = () => {
-    setCurrentPage((prevPage) => Math.max(prevPage - 1, 1));
-  };
 
   const goToPage = (page) => {
     setCurrentPage(page);
@@ -25,8 +18,6 @@ const usePagination = (itemsPerPage, items) => {
 
   return {
     currentItems,
-    nextPage,
-    prevPage,
     goToPage,
     currentPage,
     totalPages,
@@ -34,16 +25,28 @@ const usePagination = (itemsPerPage, items) => {
 };
 
 const Sale = (props) => {
+  const router = useRouter();
+  const { page } = router.query;
+  const initialPage = page ? parseInt(page, 10) : 1;
+
   const { products } = props.data;
   const productsPerPage = 8;
-  const {
-    currentItems,
-    nextPage,
-    prevPage,
-    goToPage,
-    currentPage,
-    totalPages,
-  } = usePagination(productsPerPage, products);
+  const { currentItems, goToPage, currentPage, totalPages } = usePagination(
+    productsPerPage,
+    products
+  );
+
+  useEffect(() => {
+    if (initialPage && initialPage >= 1 && initialPage <= totalPages) {
+      goToPage(initialPage);
+    }
+  }, [initialPage, totalPages]);
+
+  useEffect(() => {
+    if (currentPage !== initialPage) {
+      router.push(`/sale?page=${currentPage}`, undefined, { shallow: true });
+    }
+  }, [currentPage, initialPage, router]);
   return (
     <div>
       <div>

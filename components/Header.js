@@ -11,15 +11,14 @@ import { useSelector } from "react-redux";
 
 const Header = () => {
   const [cartNo, setCartNo] = useState(0);
-  const productData = useSelector((data) => data.cartData.cartProducts);
+  const productData = useSelector((data) => data.cart.cartProducts);
 
   useEffect(() => {
-    // Create a Set to store unique product IDs
     const uniqueProductIDs = new Set();
     productData.forEach((product) => {
       uniqueProductIDs.add(product.data.productID);
     });
-    // Set the cart number to the size of the Set
+
     setCartNo(uniqueProductIDs.size);
   }, [productData]);
 
@@ -76,10 +75,10 @@ const Header = () => {
                 <Link href="/">Home</Link>
               </li>
               <li>
-                <Link href="/Shop/shop">Shop</Link>
+                <Link href="/shop">Shop</Link>
               </li>
               <li>
-                <Link href="/Sale/sale">Sale</Link>
+                <Link href="/sale">Sale</Link>
               </li>
             </ul>
           </div>
@@ -92,19 +91,19 @@ const Header = () => {
               </Link>
             </li>
             <li>
-              <Link href="/Shop/shop" className="link link-hover">
+              <Link href="/shop" className="link link-hover">
                 Shop
               </Link>
             </li>
             <li>
-              <Link href="/Sale/sale" className="link link-hover">
+              <Link href="/sale" className="link link-hover">
                 Sale
               </Link>
             </li>
           </ul>
         </div>
         <div className="navbar-end">
-          <Link href="/Cart">
+          <Link href="/cart">
             <button className="btn-sm m-1 me-5 relative">
               <div className="top-0 absolute left-10 right-0">
                 <p className="flex h-1 w-1 items-center justify-center rounded-full bg-red-500 p-3 text-xs text-white">

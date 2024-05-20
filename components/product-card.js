@@ -107,7 +107,7 @@ const ProductCard = ({
           </div>
           <div className="card-actions ">
             <Link
-              href={`/ProductDetail/${productID + productTitle}`}
+              href={`/products/${productID + productTitle}`}
               className="btn btn-active btn-sm w-full"
             >
               <button

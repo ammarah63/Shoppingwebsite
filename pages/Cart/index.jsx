@@ -9,7 +9,8 @@ import {
 import { useSelector, useDispatch } from "react-redux";
 
 const Cart = (props) => {
-  const productData = useSelector((data) => data.cartData.cartProducts);
+  const productData = useSelector((data) => data.cart.cartProducts);
+   const productData1 = useSelector((data) => data);
   const [products, setProducts] = useState({});
   const [subtotal, setSubtotal] = useState(0);
   const [shipping, setShipping] = useState(0);
@@ -21,6 +22,7 @@ const Cart = (props) => {
   };
 
   useEffect(() => {
+    console.log(productData1);
     const productsObj = {};
     let totalPrice = 0;
 
