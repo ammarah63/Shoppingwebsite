@@ -355,8 +355,8 @@ const Login = (props) => {
                       Login with Email
                     </button>
                     <p className="text-xs my-5">
-                      Make sure you're signed in to the browser with the same
-                      Google, email or Facebook account you want to login.
+                      Make sure you&apos;re signed in to the browser with the
+                      same Google, email or Facebook account you want to login.
                     </p>
                   </>
                 )}
