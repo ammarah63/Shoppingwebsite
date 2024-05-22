@@ -3,10 +3,11 @@ import React, { useState, useEffect } from "react";
 import product1 from "../public/assets/product1.jpg";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { FaShoppingCart } from "react-icons/fa";
 import { addselectedProduct } from "../redux/slices/productSlice";
 import { addcartProducts } from "../redux/slices/cartSlice";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Toast from "./Toast";
 
 const ProductCard = ({
@@ -26,6 +27,10 @@ const ProductCard = ({
   const [cartProducts, setCartProducts] = useState();
   const [quantity, setQuantity] = useState(1);
   const [showToast, setShowToast] = useState(false);
+  const router = useRouter();
+  const user = useSelector((state) => state.auth.user);
+
+
   const handleSeeDetailsClick = () => {
     dispatch(
       addselectedProduct({
@@ -46,26 +51,30 @@ const ProductCard = ({
 
   function AddToCart() {
     console.log("working");
-    dispatch(
-      addcartProducts({
-        productID,
-        productTitle,
-        productImage,
-        productDescription,
-        productPrice,
-        productRating,
-        productBrand,
-        productDiscount,
-        productStock,
-        productImages,
-        productCategory,
-        quantity,
-      })
-    );
-    setShowToast(true);
-    setTimeout(() => {
-      setShowToast(false);
-    }, 3000);
+    if (user) {
+      dispatch(
+        addcartProducts({
+          productID,
+          productTitle,
+          productImage,
+          productDescription,
+          productPrice,
+          productRating,
+          productBrand,
+          productDiscount,
+          productStock,
+          productImages,
+          productCategory,
+          quantity,
+        })
+      );
+      setShowToast(true);
+      setTimeout(() => {
+        setShowToast(false);
+      }, 3000);
+    } else {
+      router.push("/login");
+    }
   }
 
   return (
@@ -123,10 +132,17 @@ const ProductCard = ({
                 Add to Cart
               </button>
             </a>
+            {user ? (
+              <></>
+            ) : (
+              <>
+                <p className="text-xs text-center">Login to add to cart</p>
+              </>
+            )}
           </div>
         </div>
       </div>
-      {showToast && <Toast />}
+      {showToast && <Toast message="Product Added to the Cart" />}
     </div>
   );
 };

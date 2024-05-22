@@ -4,20 +4,20 @@ import { persistStore, persistReducer } from "redux-persist";
 import { combineReducers } from "redux";
 import productReducer from "./slices/productSlice";
 import cartReducer from "./slices/cartSlice";
+import authReducer from "./slices/authSlice";
 
 
 const rootReducer = combineReducers({
   cart: cartReducer,
-  product: productReducer, 
+  product: productReducer,
+  auth: authReducer,
 });
-
 
 const persistConfig = {
   key: "root",
   storage,
-  whitelist: ["cart"], 
+  whitelist: ["auth", "cart"],
 };
-
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 

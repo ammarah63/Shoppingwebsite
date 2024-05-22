@@ -13,40 +13,45 @@ const ProductDetail = (props) => {
   const [showToast, setShowToast] = useState(false);
   const [quantity, setQuantity] = useState(1);
   const { products } = props.data || { products: [] };
+  const user = useSelector((state) => state.auth.user);
 
   const AddToCart = () => {
-     const productID = productData.productID;
-     const productTitle = productData.productTitle;
-     const productImage = productData.productImage;
-     const productDescription = productData.productDescription;
-     const productPrice = productData.productPrice;
-     const productRating = productData.productRating;
-     const productBrand = productData.productBrand;
-     const productDiscount = productData.productDiscount;
-     const productStock = productData.productStock;
-     const productImages = productData.productImages;
-     const productCategory = productData.productCategory;
-     dispatch(
-       addcartProducts({
-         productID,
-         productTitle,
-         productImage,
-         productDescription,
-         productPrice,
-         productRating,
-         productBrand,
-         productDiscount,
-         productStock,
-         productImages,
-         productCategory,
-         quantity,
-       })
-     );
-   // dispatch(addcartProducts(productData));
-    setShowToast(true);
-    setTimeout(() => {
-      setShowToast(false);
-    }, 3000);
+      if (user) {
+        const productID = productData.productID;
+        const productTitle = productData.productTitle;
+        const productImage = productData.productImage;
+        const productDescription = productData.productDescription;
+        const productPrice = productData.productPrice;
+        const productRating = productData.productRating;
+        const productBrand = productData.productBrand;
+        const productDiscount = productData.productDiscount;
+        const productStock = productData.productStock;
+        const productImages = productData.productImages;
+        const productCategory = productData.productCategory;
+        dispatch(
+          addcartProducts({
+            productID,
+            productTitle,
+            productImage,
+            productDescription,
+            productPrice,
+            productRating,
+            productBrand,
+            productDiscount,
+            productStock,
+            productImages,
+            productCategory,
+            quantity,
+          })
+        );
+        // dispatch(addcartProducts(productData));
+        setShowToast(true);
+        setTimeout(() => {
+          setShowToast(false);
+        }, 3000);
+      } else {
+        router.push("/login");
+      }
   };
 
   const renderStars = (rating) => {
@@ -249,6 +254,13 @@ const ProductDetail = (props) => {
               {" "}
               <FaShoppingCart fontSize={20} /> Add to Cart
             </button>
+            {user ? (
+              <></>
+            ) : (
+              <>
+                <p className="text-xs text-center">Login to add to cart</p>
+              </>
+            )}
           </div>
         </div>
       </div>
@@ -505,7 +517,7 @@ const ProductDetail = (props) => {
           </div>
         </div>
       </div>
-      {showToast && <Toast />}
+      {showToast && <Toast message="Product Added to the Cart" />}
     </div>
   );
 };

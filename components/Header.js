@@ -1,4 +1,3 @@
-"use client";
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import {
@@ -6,13 +5,18 @@ import {
   FaInstagramSquare,
   FaShoppingCart,
 } from "react-icons/fa";
+import { useRouter } from "next/router";
 import { FaSquareXTwitter } from "react-icons/fa6";
+import { FaUser } from "react-icons/fa";
+import { signOut } from "firebase/auth";
 import { useSelector } from "react-redux";
+import { auth } from "@/firebaseConfig";
 
 const Header = () => {
   const [cartNo, setCartNo] = useState(0);
   const productData = useSelector((data) => data.cart.cartProducts);
-
+  const user = useSelector((state) => state.auth.user);
+  const router = useRouter();
   useEffect(() => {
     const uniqueProductIDs = new Set();
     productData.forEach((product) => {
@@ -21,6 +25,19 @@ const Header = () => {
 
     setCartNo(uniqueProductIDs.size);
   }, [productData]);
+  const logout = async () => {
+    try {
+      await signOut(auth);
+      console.log("User logged out successfully");
+    } catch (error) {
+      console.error("Error logging out:", error);
+    }
+  };
+
+  const handleLogout = async () => {
+    await logout();
+    router.push("/login");
+  };
 
   return (
     <>
@@ -102,7 +119,7 @@ const Header = () => {
             </li>
           </ul>
         </div>
-        <div className="navbar-end">
+        <div className="navbar-end divide-x-2 divide-slate-400/25">
           <Link href="/cart">
             <button className="btn-sm m-1 me-5 relative">
               <div className="top-0 absolute left-10 right-0">
@@ -113,6 +130,40 @@ const Header = () => {
               <FaShoppingCart fontSize={30} className="mt-4" />
             </button>
           </Link>
+          {user ? (
+            <Link href="/login" className="link link-hover">
+              <button className="flex btn-sm m-1 me-5 relative text-xl">
+                {user.displayName}
+              </button>
+            </Link>
+          ) : (
+            // <div className="dropdown">
+            //   <div tabIndex={0} role="button" className="btn btn-ghost">
+            //     <p> {user.displayName}</p>
+            //   </div>
+            //   <ul
+            //     tabIndex={0}
+            //     className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
+            //   >
+            //     <li>
+            //       <Link href="/login">Profile</Link>
+            //     </li>
+            //     <li>
+            //       <button onClick={handleLogout}>Logout</button>
+            //     </li>
+            //   </ul>
+            // </div>
+            // <Link href="/login" className="link link-hover">
+            //   <button className="flex btn-sm m-1 me-5 relative text-xl">
+            //     {user.displayName}
+            //   </button>
+            // </Link>
+            <Link href="/login" className="link link-hover">
+              <button className="flex btn-sm m-1 me-5 relative text-xl">
+                <FaUser className="mx-2 mt-1" /> Login
+              </button>
+            </Link>
+          )}
         </div>
       </div>
     </>
