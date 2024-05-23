@@ -9,11 +9,13 @@ import { useRouter } from "next/router";
 import { FaSquareXTwitter } from "react-icons/fa6";
 import { FaUser } from "react-icons/fa";
 import { signOut } from "firebase/auth";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { auth } from "@/firebaseConfig";
+import { clearUser } from "@/redux/slices/authSlice";
 
 const Header = () => {
   const [cartNo, setCartNo] = useState(0);
+  const dispatch = useDispatch();
   const productData = useSelector((data) => data.cart.cartProducts);
   const user = useSelector((state) => state.auth.user);
   const router = useRouter();
@@ -25,9 +27,11 @@ const Header = () => {
 
     setCartNo(uniqueProductIDs.size);
   }, [productData]);
+
   const logout = async () => {
     try {
       await signOut(auth);
+      dispatch(clearUser());
       console.log("User logged out successfully");
     } catch (error) {
       console.error("Error logging out:", error);
@@ -131,33 +135,39 @@ const Header = () => {
             </button>
           </Link>
           {user ? (
-            <Link href="/login" className="link link-hover">
-              <button className="flex btn-sm m-1 me-5 relative text-xl">
-                {user.displayName}
-              </button>
-            </Link>
+            <>
+              <div className="dropdown">
+                <div tabIndex={0} role="button" className="btn btn-ghost">
+                  <p> {user.displayName}</p>
+                </div>
+                <ul
+                  tabIndex={0}
+                  className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 text-neutral rounded-box w-52"
+                >
+                  <li>
+                    <Link href="/login">Profile</Link>
+                  </li>
+                  <li>
+                    <button onClick={handleLogout}>Logout</button>
+                  </li>
+                </ul>
+              </div>
+              {/* <Link href="/login" className="link link-hover">
+                <button className="flex btn-sm m-1 me-5 relative text-xl">
+                  {user.displayName}
+                </button>
+              </Link>
+            
+              <Link href="/login" className="link link-hover">
+                
+                <button className="flex btn-sm m-1 me-5 relative text-xl">
+                 {user.displayName}
+                  
+                </button>
+              
+              </Link> */}
+            </>
           ) : (
-            // <div className="dropdown">
-            //   <div tabIndex={0} role="button" className="btn btn-ghost">
-            //     <p> {user.displayName}</p>
-            //   </div>
-            //   <ul
-            //     tabIndex={0}
-            //     className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
-            //   >
-            //     <li>
-            //       <Link href="/login">Profile</Link>
-            //     </li>
-            //     <li>
-            //       <button onClick={handleLogout}>Logout</button>
-            //     </li>
-            //   </ul>
-            // </div>
-            // <Link href="/login" className="link link-hover">
-            //   <button className="flex btn-sm m-1 me-5 relative text-xl">
-            //     {user.displayName}
-            //   </button>
-            // </Link>
             <Link href="/login" className="link link-hover">
               <button className="flex btn-sm m-1 me-5 relative text-xl">
                 <FaUser className="mx-2 mt-1" /> Login

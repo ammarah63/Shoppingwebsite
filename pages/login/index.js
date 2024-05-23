@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { MdEmail } from "react-icons/md";
 import { IoLogoFacebook } from "react-icons/io";
-
+import { useRouter } from "next/router";
 import { useDispatch, useSelector } from "react-redux";
 import {
   signInWithPopup,
@@ -45,52 +45,118 @@ const Login = (props) => {
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [errors, setErrors] = useState({});
+  const router = useRouter();
   const dispatch = useDispatch();
   const user = useSelector((state) => state.auth.user);
+
+  const validateEmail = (email) => {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return regex.test(email);
+  };
+
+  const validatePassword = (password) => {
+    const regex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
+    return regex.test(password);
+  };
+
+  const validateName = (name) => {
+    return name.trim() !== "";
+  };
+
   const handleEmailSignIn = async (e) => {
     e.preventDefault();
-    try {
-      const result = await signInWithEmailAndPassword(auth, email, password);
-      const user = result.user;
-      dispatch(
-        setUser({
-          uid: user.uid,
-          email: user.email,
-          displayName: user.displayName,
-        })
-      );
-    } catch (error) {
-      console.error("Error signing in with Email", error);
+    let valid = true;
+    let errors = {};
+
+    if (!validateEmail(email)) {
+      valid = false;
+      errors.email = "Invalid email format";
+    }
+
+    if (!validatePassword(password)) {
+      valid = false;
+      errors.password =
+        "Password must be at least 8 characters long and include at least one letter and one number";
+    }
+    setErrors(errors);
+    if (valid) {
+      console.log("Form is valid...");
+
+      try {
+        const result = await signInWithEmailAndPassword(auth, email, password);
+        const user = result.user;
+        dispatch(
+          setUser({
+            uid: user.uid,
+            email: user.email,
+            displayName: user.displayName,
+          })
+        );
+        router.push("/");
+      } catch (error) {
+        console.error("Error signing in with Email", error);
+      }
     }
   };
 
   const handleEmailSignUp = async (e) => {
     e.preventDefault();
-    try {
-      const result = await createUserWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-      const user = result.user;
-      await updateProfile(user, {
-        displayName: `${firstName} ${lastName}`,
-      });
-      await addToFirestore(user.uid, user.email, firstName, lastName);
-      dispatch(
-        setUser({
-          uid: user.uid,
-          email: user.email,
-          displayName: user.displayName,
-        })
-      );
-      setShowToast(true);
-      setTimeout(() => {
-        setShowToast(false);
-      }, 3000);
-      return true;
-    } catch (error) {
-      console.error("Error signing up with Email", error);
+    let valid = true;
+    let errors = {};
+
+    if (!validateEmail(email)) {
+      valid = false;
+      errors.email = "Invalid email format";
+    }
+
+    if (!validatePassword(password)) {
+      valid = false;
+      errors.password =
+        "Password must be at least 8 characters long and include at least one letter and one number";
+    }
+
+    if (!validateName(firstName)) {
+      valid = false;
+      errors.firstName = "First name cannot be empty";
+    }
+
+    if (!validateName(lastName)) {
+      valid = false;
+      errors.lastName = "Last name cannot be empty";
+    }
+
+    setErrors(errors);
+    if (valid) {
+      console.log("Form is valid...");
+
+      try {
+        const result = await createUserWithEmailAndPassword(
+          auth,
+          email,
+          password
+        );
+        const user = result.user;
+        await updateProfile(user, {
+          displayName: `${firstName} ${lastName}`,
+        });
+        await addToFirestore(user.uid, user.email, firstName, lastName);
+        dispatch(
+          setUser({
+            uid: user.uid,
+            email: user.email,
+            displayName: user.displayName,
+          })
+        );
+        setShowToast(true);
+        setTimeout(() => {
+          setShowToast(false);
+        }, 3000);
+        setEmaillogin1(true);
+        return true;
+      } catch (error) {
+        console.error("Error signing up with Email", error);
+      }
     }
   };
 
@@ -98,6 +164,7 @@ const Login = (props) => {
     try {
       const result = await signInWithPopup(auth, googleProvider);
       const user = result.user;
+      router.push("/");
       dispatch(
         setUser({
           uid: user.uid,
@@ -114,6 +181,7 @@ const Login = (props) => {
     try {
       const result = await signInWithPopup(auth, facebookProvider);
       const user = result.user;
+      router.push("/");
       dispatch(
         setUser({
           uid: user.uid,
@@ -161,6 +229,10 @@ const Login = (props) => {
                           onChange={(e) => setEmail(e.target.value)}
                         />
                       </label>
+                      {errors.email && (
+                        <p className="text-red-500">{errors.email}</p>
+                      )}
+
                       <label className="input input-bordered flex items-center gap-2 my-2">
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -174,7 +246,6 @@ const Login = (props) => {
                             clipRule="evenodd"
                           />
                         </svg>
-
                         <input
                           type="text"
                           className="grow"
@@ -183,7 +254,11 @@ const Login = (props) => {
                           onChange={(e) => setFirstName(e.target.value)}
                         />
                       </label>
-                      <label className="input input-bordered flex items-center gap-2  my-2">
+                      {errors.firstName && (
+                        <p className="text-red-500">{errors.firstName}</p>
+                      )}
+
+                      <label className="input input-bordered flex items-center gap-2 my-2">
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           viewBox="0 0 16 16"
@@ -196,7 +271,6 @@ const Login = (props) => {
                             clipRule="evenodd"
                           />
                         </svg>
-
                         <input
                           type="text"
                           className="grow"
@@ -205,7 +279,11 @@ const Login = (props) => {
                           onChange={(e) => setLastName(e.target.value)}
                         />
                       </label>
-                      <label className="input input-bordered flex items-center gap-2  my-2">
+                      {errors.lastName && (
+                        <p className="text-red-500">{errors.lastName}</p>
+                      )}
+
+                      <label className="input input-bordered flex items-center gap-2 my-2">
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           viewBox="0 0 16 16"
@@ -226,11 +304,11 @@ const Login = (props) => {
                           onChange={(e) => setPassword(e.target.value)}
                         />
                       </label>
-                      <button
-                        className="btn btn-active btn-wide"
-                        type="submit"
-                        // onClick={handleEmailSignUp}
-                      >
+                      {errors.password && (
+                        <p className="text-red-500">{errors.password}</p>
+                      )}
+
+                      <button className="btn btn-active btn-wide" type="submit">
                         Sign up
                       </button>
                     </form>
