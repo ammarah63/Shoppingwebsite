@@ -12,6 +12,7 @@ import { signOut } from "firebase/auth";
 import { useSelector, useDispatch } from "react-redux";
 import { auth } from "@/firebaseConfig";
 import { clearUser } from "@/redux/slices/authSlice";
+import { clearCart } from "@/redux/slices/cartSlice";
 
 const Header = () => {
   const [cartNo, setCartNo] = useState(0);
@@ -19,19 +20,23 @@ const Header = () => {
   const productData = useSelector((data) => data.cart.cartProducts);
   const user = useSelector((state) => state.auth.user);
   const router = useRouter();
-  useEffect(() => {
-    const uniqueProductIDs = new Set();
-    productData.forEach((product) => {
-      uniqueProductIDs.add(product.data.productID);
-    });
 
-    setCartNo(uniqueProductIDs.size);
+  useEffect(() => {
+    if(productData){
+      const uniqueProductIDs = new Set();
+      productData.forEach((product) => {
+        uniqueProductIDs.add(product.data.productID);
+      });
+
+      setCartNo(uniqueProductIDs.size);
+    }
   }, [productData]);
 
   const logout = async () => {
     try {
       await signOut(auth);
       dispatch(clearUser());
+      dispatch(clearCart());
       console.log("User logged out successfully");
     } catch (error) {
       console.error("Error logging out:", error);

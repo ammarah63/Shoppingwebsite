@@ -20,12 +20,35 @@ const cartSlice = createSlice({
       const productIDs = action.payload.productID;
       console.log(productIDs);
       console.log("Update state:", JSON.parse(JSON.stringify(state)));
-      let existingProduct = state.cartProducts.find(
-        (p) => p.data.productID === productIDs
-      );
-      console.log("existingProduct", existingProduct);
-      if (existingProduct) {
-        existingProduct.data.quantity += 1;
+      if (state.cartProducts) {
+        let existingProduct = state.cartProducts.find(
+          (p) => p.data.productID === productIDs
+        );
+        console.log("existingProduct", existingProduct);
+
+        if (existingProduct) {
+          existingProduct.data.quantity += 1;
+        } else {
+          console.log(`Product with ID ${productIDs} not found in cart.`);
+          const data = {
+            productID: action.payload.productID,
+            productTitle: action.payload.productTitle,
+            productImage: action.payload.productImage,
+            productDescription: action.payload.productDescription,
+            productPrice: action.payload.productPrice,
+            productRating: action.payload.productRating,
+            productBrand: action.payload.productBrand,
+            productDiscount: action.payload.productDiscount,
+            productStock: action.payload.productStock,
+            productImages: action.payload.productImages,
+            productCategory: action.payload.productCategory,
+            quantity: 1,
+          };
+          action.payload.quantity = 1;
+          state.cartProducts.push({
+            data,
+          });
+        }
       } else {
         console.log(`Product with ID ${productIDs} not found in cart.`);
         const data = {
@@ -47,8 +70,8 @@ const cartSlice = createSlice({
           data,
         });
       }
-      let cartData = JSON.stringify(current(state.cartProducts));
-      window.localStorage.setItem("cart", cartData);
+      // let cartData = JSON.stringify(current(state.cartProducts));
+      // window.localStorage.setItem("cart", cartData);
     },
     removecartProducts: (state, action) => {
       console.log("Remove Product", action.payload.productID);
@@ -79,9 +102,16 @@ const cartSlice = createSlice({
         console.log("id not found");
       }
     },
+    clearCart: (state) => {
+      state.cartProducts = [];
+    },
   },
 });
 
-export const { addcartProducts, removecartProducts, updateProductQuantity } =
-  cartSlice.actions;
+export const {
+  addcartProducts,
+  removecartProducts,
+  updateProductQuantity,
+  clearCart,
+} = cartSlice.actions;
 export default cartSlice.reducer;

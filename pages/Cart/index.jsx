@@ -10,7 +10,7 @@ import { useSelector, useDispatch } from "react-redux";
 
 const Cart = (props) => {
   const productData = useSelector((data) => data.cart.cartProducts);
-   const productData1 = useSelector((data) => data);
+  const productData1 = useSelector((data) => data);
   const [products, setProducts] = useState({});
   const [subtotal, setSubtotal] = useState(0);
   const [shipping, setShipping] = useState(0);
@@ -22,21 +22,23 @@ const Cart = (props) => {
   };
 
   useEffect(() => {
-    console.log(productData1);
-    const productsObj = {};
-    let totalPrice = 0;
+    if (productData) {
+      console.log(productData1);
+      const productsObj = {};
+      let totalPrice = 0;
 
-    productData.forEach((product) => {
-      const { productID, productPrice, quantity } = product.data;
-      const price = productPrice * quantity;
+      productData.forEach((product) => {
+        const { productID, productPrice, quantity } = product.data;
+        const price = productPrice * quantity;
 
-      productsObj[productID] = { ...product.data, quantity };
-      totalPrice += price;
-    });
+        productsObj[productID] = { ...product.data, quantity };
+        totalPrice += price;
+      });
 
-    setProducts(productsObj);
-    setSubtotal(totalPrice);
-    setShipping(totalPrice >= 500 ? 0 : 50);
+      setProducts(productsObj);
+      setSubtotal(totalPrice);
+      setShipping(totalPrice >= 500 ? 0 : 50);
+    }
   }, [productData]);
 
   const handleIncrement = (productIDs) => {
@@ -145,80 +147,84 @@ const Cart = (props) => {
                   </tr>
                 </thead>
                 <tbody>
-                  {Object.keys(products).map((productID) => {
-                    const product = products[productID];
-                    return (
-                      <tr className="bg-base-200" key={productID}>
-                        <th>
-                          <Image
-                            src={product.productImage}
-                            alt="Product"
-                            width={50}
-                            height={50}
-                            className="object-cover h-[70px] w-[70px]"
-                          />
-                        </th>
-                        <td>{product.productTitle}</td>
-                        <td>{product.productPrice} $</td>
-                        <td>
-                          <form className="max-w-xs mx-auto">
-                            <div className="relative flex items-center max-w-[8rem]">
-                              <button
-                                type="button"
-                                id="decrement-button"
-                                onClick={() => handleDecrement(productID)}
-                                className="bg-neutral rounded-s-lg p-3 h-11 "
-                              >
-                                -
-                              </button>
-                              <input
-                                type="text"
-                                id="quantity-input"
-                                aria-describedby="helper-text-explanation"
-                                className="bg-white text-neutral border-x-0 border-gray-300 h-11 text-center text-sm block w-full py-2.5 "
-                                placeholder="1"
-                                value={product.quantity}
-                                readOnly
-                                required
+                  {productData && (
+                    <>
+                      {Object.keys(products).map((productID) => {
+                        const product = products[productID];
+                        return (
+                          <tr className="bg-base-200" key={productID}>
+                            <th>
+                              <Image
+                                src={product.productImage}
+                                alt="Product"
+                                width={50}
+                                height={50}
+                                className="object-cover h-[70px] w-[70px]"
                               />
-                              <button
-                                type="button"
-                                id="increment-button"
-                                onClick={() => handleIncrement(productID)}
-                                className="bg-neutral rounded-e-lg p-3 h-11 "
+                            </th>
+                            <td>{product.productTitle}</td>
+                            <td>{product.productPrice} $</td>
+                            <td>
+                              <form className="max-w-xs mx-auto">
+                                <div className="relative flex items-center max-w-[8rem]">
+                                  <button
+                                    type="button"
+                                    id="decrement-button"
+                                    onClick={() => handleDecrement(productID)}
+                                    className="bg-neutral rounded-s-lg p-3 h-11 "
+                                  >
+                                    -
+                                  </button>
+                                  <input
+                                    type="text"
+                                    id="quantity-input"
+                                    aria-describedby="helper-text-explanation"
+                                    className="bg-white text-neutral border-x-0 border-gray-300 h-11 text-center text-sm block w-full py-2.5 "
+                                    placeholder="1"
+                                    value={product.quantity}
+                                    readOnly
+                                    required
+                                  />
+                                  <button
+                                    type="button"
+                                    id="increment-button"
+                                    onClick={() => handleIncrement(productID)}
+                                    className="bg-neutral rounded-e-lg p-3 h-11 "
+                                  >
+                                    +
+                                  </button>
+                                </div>
+                              </form>
+                            </td>
+                            <td>
+                              <a
+                                onClick={() =>
+                                  handleRemoveProduct(product.productID)
+                                }
                               >
-                                +
-                              </button>
-                            </div>
-                          </form>
-                        </td>
-                        <td>
-                          <a
-                            onClick={() =>
-                              handleRemoveProduct(product.productID)
-                            }
-                          >
-                            <button className="btn btn-circle">
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                className="h-6 w-6"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth="2"
-                                  d="M6 18L18 6M6 6l12 12"
-                                />
-                              </svg>
-                            </button>
-                          </a>
-                        </td>
-                      </tr>
-                    );
-                  })}
+                                <button className="btn btn-circle">
+                                  <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    className="h-6 w-6"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                  >
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      strokeWidth="2"
+                                      d="M6 18L18 6M6 6l12 12"
+                                    />
+                                  </svg>
+                                </button>
+                              </a>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </>
+                  )}
                 </tbody>
               </table>
             </div>
