@@ -3,7 +3,7 @@ import { Footer, Header } from "@/components";
 import { Providers } from "@/redux/providers";
 import store, { persistor } from "@/redux/store"; 
 import { PersistGate } from "redux-persist/integration/react";
-
+import "leaflet/dist/leaflet.css";
 
 export default function App({ Component, pageProps }) {
   return (

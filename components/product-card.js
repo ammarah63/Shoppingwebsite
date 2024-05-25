@@ -30,7 +30,6 @@ const ProductCard = ({
   const router = useRouter();
   const user = useSelector((state) => state.auth.user);
 
-
   const handleSeeDetailsClick = () => {
     dispatch(
       addselectedProduct({
@@ -76,7 +75,13 @@ const ProductCard = ({
       router.push("/login");
     }
   }
-
+  const truncateDescription = (description, wordLimit) => {
+    const words = description.split(" ");
+    if (words.length > wordLimit) {
+      return words.slice(0, wordLimit).join(" ") + "...";
+    }
+    return description;
+  };
   return (
     <div>
       <div className="card lg:w-70 md:w-50 sm:w-30  bg-neutral text-neutral-content shadow-xl p-2 m-2">
@@ -112,7 +117,11 @@ const ProductCard = ({
           )}
           <div className="h-20">
             {" "}
-            <p className="text-sm">{productDescription}</p>
+            <p className="text-sm">
+              {" "}
+              {truncateDescription(productDescription, 15)}
+              {/* {productDescription} */}
+            </p>
           </div>
           <div className="card-actions ">
             <Link

@@ -2,7 +2,12 @@ import React from "react";
 import { ProductCard, Slider } from "../components";
 
 const Home = (props) => {
-   const { products } = props.data || { products: [] };
+  const { products } = props.data;
+  const furnitureProducts = products.filter(
+    (product) => product.category === "furniture"
+  );
+
+  console.log(furnitureProducts);
   return (
     <main>
       <div>
@@ -15,23 +20,21 @@ const Home = (props) => {
         </h2>
       </div>
       <div className="px-20 grid lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 gap-4 mb-4">
-        {products.map((product, index) => (
+        {furnitureProducts.map((product, index) => (
           <div key={index}>
-            {product.category == "smartphones" && (
-              <ProductCard
-                productDescription={product.description}
-                productImage={product.thumbnail}
-                productTitle={product.title}
-                productPrice={product.price}
-                productID={product.id}
-                productDiscount={product.discountPercentage}
-                productRating={product.rating}
-                productBrand={product.brand}
-                productCategory={product.category}
-                productStock={product.stock}
-                productImages={product.images}
-              />
-            )}
+            <ProductCard
+              productDescription={product.description}
+              productImage={product.thumbnail}
+              productTitle={product.title}
+              productPrice={product.price}
+              productID={product.id}
+              productDiscount={product.discountPercentage}
+              productRating={product.rating}
+              productBrand={product.brand}
+              productCategory={product.category}
+              productStock={product.stock}
+              productImages={product.images}
+            />
           </div>
         ))}
       </div>
@@ -41,10 +44,10 @@ const Home = (props) => {
 
 export default Home;
 
-
 export async function getServerSideProps() {
-  const res = await fetch("https://dummyjson.com/products");
+  const res = await fetch("https://dummyjson.com/products?limit=0");
   const data = await res.json();
+  console.log(res);
   return {
     props: {
       data,

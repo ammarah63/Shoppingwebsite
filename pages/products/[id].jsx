@@ -12,46 +12,58 @@ const ProductDetail = (props) => {
   const { productID, productTitle } = router.query;
   const [showToast, setShowToast] = useState(false);
   const [quantity, setQuantity] = useState(1);
-  const { products } = props.data || { products: [] };
+  const { products } = props.data ;
   const user = useSelector((state) => state.auth.user);
+  const [selectedImage, setSelectedImage] = useState(productData.productImage);
+  const [showMagnified, setShowMagnified] = useState(false);
+
+  const handleImageClick = (image) => {
+    setSelectedImage(image);
+    // setShowMagnified(true);
+  };
+
+   const beautyProducts = products.filter(
+     (product) => product.category === "beauty"
+   );
+
 
   const AddToCart = () => {
-      if (user) {
-        const productID = productData.productID;
-        const productTitle = productData.productTitle;
-        const productImage = productData.productImage;
-        const productDescription = productData.productDescription;
-        const productPrice = productData.productPrice;
-        const productRating = productData.productRating;
-        const productBrand = productData.productBrand;
-        const productDiscount = productData.productDiscount;
-        const productStock = productData.productStock;
-        const productImages = productData.productImages;
-        const productCategory = productData.productCategory;
-        dispatch(
-          addcartProducts({
-            productID,
-            productTitle,
-            productImage,
-            productDescription,
-            productPrice,
-            productRating,
-            productBrand,
-            productDiscount,
-            productStock,
-            productImages,
-            productCategory,
-            quantity,
-          })
-        );
-        // dispatch(addcartProducts(productData));
-        setShowToast(true);
-        setTimeout(() => {
-          setShowToast(false);
-        }, 3000);
-      } else {
-        router.push("/login");
-      }
+    if (user) {
+      const productID = productData.productID;
+      const productTitle = productData.productTitle;
+      const productImage = productData.productImage;
+      const productDescription = productData.productDescription;
+      const productPrice = productData.productPrice;
+      const productRating = productData.productRating;
+      const productBrand = productData.productBrand;
+      const productDiscount = productData.productDiscount;
+      const productStock = productData.productStock;
+      const productImages = productData.productImages;
+      const productCategory = productData.productCategory;
+      dispatch(
+        addcartProducts({
+          productID,
+          productTitle,
+          productImage,
+          productDescription,
+          productPrice,
+          productRating,
+          productBrand,
+          productDiscount,
+          productStock,
+          productImages,
+          productCategory,
+          quantity,
+        })
+      );
+      // dispatch(addcartProducts(productData));
+      setShowToast(true);
+      setTimeout(() => {
+        setShowToast(false);
+      }, 3000);
+    } else {
+      router.push("/login");
+    }
   };
 
   const renderStars = (rating) => {
@@ -120,11 +132,13 @@ const ProductDetail = (props) => {
           <div className="grid gap-4">
             <div>
               <img
-                className="h-auto max-w-full rounded-lg"
-                src={productData.productImage}
+                className="h-auto max-w-full rounded-lg "
+                src={selectedImage}
                 alt=""
+                //   onClick={() => setShowMagnified(true)}
               />
             </div>
+
             <div className="grid grid-cols-5 gap-4">
               {productData.productImages.map((image) => (
                 <div key={image}>
@@ -132,10 +146,24 @@ const ProductDetail = (props) => {
                     className="h-auto max-w-full rounded-lg"
                     src={image}
                     alt=""
+                    onClick={() => handleImageClick(image)}
                   />
                 </div>
               ))}
             </div>
+
+            {showMagnified && (
+              <div className="fixed top-0 left-0 right-0 bottom-0 flex items-center justify-center bg-gray-900 bg-opacity-75 z-50">
+                <div className="max-w-full max-h-full overflow-auto">
+                  <img
+                    className="max-w-full max-h-full rounded-lg"
+                    src={selectedImage}
+                    alt=""
+                    onClick={() => setShowMagnified(false)}
+                  />
+                </div>
+              </div>
+            )}
           </div>
         </div>
         <div className="p-10">
@@ -489,29 +517,27 @@ const ProductDetail = (props) => {
         </div>
       </div>
       <div>
-        <div className="m-30 px-20 py-10">
+        <div className=" px-20 py-10">
           <h1 className="text-4xl font-bold text-center">
             <span className="bg-neutral text-neutral-content me-3">People</span>
             also Purchased
           </h1>
-          <div className=" grid lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 gap-4 mb-4">
-            {products.map((product, index) => (
+          <div className=" grid lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 gap-4 mb-2">
+            {beautyProducts.map((product, index) => (
               <div key={index}>
-                {product.category == "smartphones" && (
-                  <ProductCard
-                    productDescription={product.description}
-                    productImage={product.thumbnail}
-                    productTitle={product.title}
-                    productPrice={product.price}
-                    productID={product.id}
-                    productDiscount={product.discountPercentage}
-                    productRating={product.rating}
-                    productBrand={product.brand}
-                    productCategory={product.category}
-                    productStock={product.stock}
-                    productImages={product.images}
-                  />
-                )}
+                <ProductCard
+                  productDescription={product.description}
+                  productImage={product.thumbnail}
+                  productTitle={product.title}
+                  productPrice={product.price}
+                  productID={product.id}
+                  productDiscount={product.discountPercentage}
+                  productRating={product.rating}
+                  productBrand={product.brand}
+                  productCategory={product.category}
+                  productStock={product.stock}
+                  productImages={product.images}
+                />
               </div>
             ))}
           </div>
@@ -525,7 +551,7 @@ const ProductDetail = (props) => {
 export default ProductDetail;
 
 export async function getServerSideProps() {
-  const res = await fetch("https://dummyjson.com/products");
+  const res = await fetch("https://dummyjson.com/products?limit=0");
   const data = await res.json();
   return {
     props: {

@@ -22,7 +22,7 @@ const Header = () => {
   const router = useRouter();
 
   useEffect(() => {
-    if(productData){
+    if (productData) {
       const uniqueProductIDs = new Set();
       productData.forEach((product) => {
         uniqueProductIDs.add(product.data.productID);
@@ -35,8 +35,7 @@ const Header = () => {
   const logout = async () => {
     try {
       await signOut(auth);
-      dispatch(clearUser());
-      dispatch(clearCart());
+
       console.log("User logged out successfully");
     } catch (error) {
       console.error("Error logging out:", error);
@@ -44,13 +43,16 @@ const Header = () => {
   };
 
   const handleLogout = async () => {
-    await logout();
     router.push("/login");
+    await logout();
+
+    dispatch(clearUser());
+    dispatch(clearCart());
   };
 
   return (
     <>
-      <div className="navbar bg-neutral text-neutral-content">
+      <div className="navbar bg-neutral text-neutral-content ">
         <div className="navbar-start">
           <Link href="/" className="btn btn-ghost text-xl">
             My Store
@@ -106,6 +108,9 @@ const Header = () => {
               <li>
                 <Link href="/sale">Sale</Link>
               </li>
+              <li>
+                <Link href="/contact">Contact Us</Link>
+              </li>
             </ul>
           </div>
         </div>
@@ -126,6 +131,11 @@ const Header = () => {
                 Sale
               </Link>
             </li>
+            <li>
+              <Link href="/contact" className="link link-hover">
+                Contact Us
+              </Link>
+            </li>
           </ul>
         </div>
         <div className="navbar-end divide-x-2 divide-slate-400/25">
@@ -141,7 +151,20 @@ const Header = () => {
           </Link>
           {user ? (
             <>
-              <div className="dropdown">
+              <details className="dropdown">
+                <summary className="m-1 btn btn-neutral">
+                  {user.displayName}
+                </summary>
+                <ul className=" mr-5 shadow menu dropdown-content z-[1] bg-base-100 rounded-box w-36 text-neutral">
+                  <li>
+                    <Link href={`/profile/${user.displayName}`}>Profile</Link>
+                  </li>
+                  <li>
+                    <button onClick={handleLogout}>Logout</button>
+                  </li>
+                </ul>
+              </details>
+              {/* <div className="dropdown">
                 <div tabIndex={0} role="button" className="btn btn-ghost">
                   <p> {user.displayName}</p>
                 </div>
@@ -150,13 +173,13 @@ const Header = () => {
                   className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 text-neutral rounded-box w-52"
                 >
                   <li>
-                    <Link href="/login">Profile</Link>
+                    <Link href={`/profile/${user.displayName}`}>Profile</Link>
                   </li>
                   <li>
                     <button onClick={handleLogout}>Logout</button>
                   </li>
                 </ul>
-              </div>
+              </div> */}
               {/* <Link href="/login" className="link link-hover">
                 <button className="flex btn-sm m-1 me-5 relative text-xl">
                   {user.displayName}

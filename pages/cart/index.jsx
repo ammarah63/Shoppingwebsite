@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { FaShoppingCart } from "react-icons/fa";
 import Image from "next/image";
+import Link from "next/link";
 import {
   removecartProducts,
   updateProductQuantity,
@@ -11,6 +12,7 @@ import { useSelector, useDispatch } from "react-redux";
 const Cart = (props) => {
   const productData = useSelector((data) => data.cart.cartProducts);
   const productData1 = useSelector((data) => data);
+  const user = useSelector((state) => state.auth.user);
   const [products, setProducts] = useState({});
   const [subtotal, setSubtotal] = useState(0);
   const [shipping, setShipping] = useState(0);
@@ -256,13 +258,15 @@ const Cart = (props) => {
                     Shipping To:
                   </p>
                   <span className="label-text justify-end mt-0.5">
-                    <b>Address H#10, Street:1</b>
+                    <b>{user?.address || "No Address Provided"}</b>
                   </span>
                 </div>
                 <div className="flex justify-end my-5">
-                  <button className="btn btn-outline btn-secondary">
-                    Change Address
-                  </button>
+                  <Link href={`/profile/${user.displayName}`}>
+                    <button className="btn btn-outline btn-secondary">
+                      Change Address
+                    </button>
+                  </Link>
                 </div>
               </div>
             </div>

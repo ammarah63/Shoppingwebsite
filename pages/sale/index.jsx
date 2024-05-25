@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import { ProductCard } from "@/components";
 import { useRouter } from "next/router";
 
-const usePagination = (itemsPerPage, items) => {
-  const [currentPage, setCurrentPage] = useState(1);
+const usePagination = (itemsPerPage, items, initialPage = 1) => {
+  const [currentPage, setCurrentPage] = useState(initialPage);
 
   const totalPages = Math.ceil(items.length / itemsPerPage);
 
@@ -28,25 +28,31 @@ const Sale = (props) => {
   const router = useRouter();
   const { page } = router.query;
   const initialPage = page ? parseInt(page, 10) : 1;
-
+  // const { products, totalProducts } = props;
   const { products } = props.data;
-  const productsPerPage = 8;
-  const { currentItems, goToPage, currentPage, totalPages } = usePagination(
-    productsPerPage,
-    products
-  );
+  const totalProducts = 100;
+  const productsPerPage = 12;
+  const totalPages = Math.ceil(totalProducts / productsPerPage);
 
+  const { currentItems, goToPage, currentPage } = usePagination(
+    productsPerPage,
+    products,
+    initialPage
+  );
   useEffect(() => {
+    console.log("products", products);
     if (initialPage && initialPage >= 1 && initialPage <= totalPages) {
       goToPage(initialPage);
     }
   }, [initialPage, totalPages]);
 
   useEffect(() => {
+    console.log(products);
     if (currentPage !== initialPage) {
       router.push(`/sale?page=${currentPage}`, undefined, { shallow: true });
     }
   }, [currentPage, initialPage, router]);
+
   return (
     <div>
       <div>
@@ -56,7 +62,7 @@ const Sale = (props) => {
           </h1>
         </div>
         <div className="px-20 grid lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 gap-4 mb-4">
-          {currentItems.map((product, index) => (
+          {products.map((product, index) => (
             <div key={index}>
               {product.discountPercentage && (
                 <ProductCard
@@ -85,7 +91,10 @@ const Sale = (props) => {
                   ? "btn btn-outline btn-secondary bg-secondary-content"
                   : "btn btn-outline btn-secondary "
               }`}
-              onClick={() => goToPage(page)}
+              onClick={() => {
+                goToPage(page);
+                router.push(`/sale?page=${page}`);
+              }}
             >
               {page}
             </button>
@@ -96,13 +105,34 @@ const Sale = (props) => {
   );
 };
 
-export async function getServerSideProps() {
-  const res = await fetch("https://dummyjson.com/products");
-  const data = await res.json();
+export async function getServerSideProps({ query }) {
+  if (query.page) {
+    console.log("context", query.page);
+    const skip = (parseInt(query.page) - 1) * 12;
+    console.log("skip", skip);
 
+    const res = await fetch(
+      `https://dummyjson.com/products?limit=12&skip=${skip}`
+    );
+    const data = await res.json();
+    console.log("data", data);
+    const totalProducts = data.total;
+    console.log("totalProducts", totalProducts);
+    return {
+      props: {
+        data,
+        totalProducts,
+      },
+    };
+  }
+  const res = await fetch("https://dummyjson.com/products?limit=12");
+  const data = await res.json();
+  console.log("data", data);
+  const totalProducts = data.total;
   return {
     props: {
       data,
+      totalProducts,
     },
   };
 }
