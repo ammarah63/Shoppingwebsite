@@ -232,7 +232,7 @@ const Profile = () => {
                         </label>
                         <input
                           type="text"
-                          value={user.address}
+                          value={address}
                           onChange={(e) => setAddress(e.target.value)}
                           className="input input-bordered w-full"
                         />

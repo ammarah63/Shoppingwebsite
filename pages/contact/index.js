@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import dynamic from "next/dynamic";
 import { IoMdMail } from "react-icons/io";
 import { FaPhone } from "react-icons/fa";
@@ -7,6 +7,7 @@ import { db } from "@/firebaseConfig";
 import { collection, addDoc } from "firebase/firestore";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import emailjs from "@emailjs/browser";
 
 const Map = dynamic(() => import("@/components/Map"), { ssr: false });
 
@@ -23,6 +24,42 @@ function Contact(props) {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isError, setIsError] = useState(false);
 
+  const sendEmail = (e) => {
+    e.preventDefault();
+
+    emailjs
+      .sendForm("service_9jkrlld", "template_3awftxs", form.current, {
+        publicKey: process.env.NEXT_PUBLIC_EMAILJS_API_KEY,
+      })
+      .then(
+        () => {
+          console.log("SUCCESS!");
+        },
+        (error) => {
+          console.log("FAILED...", error.text);
+        }
+      );
+  };
+
+  const handleSubmitMessage = async (e) => {
+    try {
+      const docRef = await addDoc(collection(db, "contactus"), {
+        Name: values.Name,
+        Email: values.Email,
+        Message: values.Message,
+      });
+
+      console.log("Document written with ID: ", docRef.id);
+      setIsSubmitted(true);
+      sendEmail();
+      setIsError(false);
+    } catch (error) {
+      console.log("Error adding document: ", error);
+      setIsSubmitted(false);
+      setIsError(true);
+    }
+  };
+
   const { values, errors, handleBlur, handleChange, handleSubmit, touched } =
     useFormik({
       initialValues: initialValues,
@@ -37,28 +74,11 @@ function Contact(props) {
           .max(50, "Must be 50 characters or less")
           .required("Required"),
       }),
-      onSubmit: (values) => {
+      onSubmit: async (values) => {
         alert(JSON.stringify(values, null, 2));
+        await handleSubmitMessage();
       },
     });
-
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-  //   try {
-  //     const docRef = await addDoc(collection(db, "contactus"), {
-  //       Name: name,
-  //       Email: email,
-  //       Message: message,
-  //     });
-  //     console.log("Document written with ID: ", docRef.id);
-  //     setIsSubmitted(true);
-  //     setIsError(false);
-  //   } catch (error) {
-  //     console.log("Error adding document: ", error);
-  //     setIsSubmitted(false);
-  //     setIsError(true);
-  //   }
-  // };
 
   return (
     <div>
@@ -144,7 +164,7 @@ function Contact(props) {
             </div>
           )}
           {!isSubmitted && (
-            <form onSubmit={handleSubmit}>
+            <form  onSubmit={handleSubmit}>
               <div className="mb-4">
                 <label
                   htmlFor="name"
