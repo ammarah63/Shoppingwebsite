@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { ProtectedRoute } from "@/components";
+import { ProtectedRoute, Toast } from "@/components";
 import { updateUserProfile } from "@/redux/slices/authSlice";
-import { db } from "../../firebaseConfig";
+import { db, storage } from "../../firebaseConfig";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import {
   collection,
   getDocs,
@@ -17,7 +18,7 @@ async function updateUserProfileInFirestore(
   lastName,
   phone,
   address,
-  profilePicURL
+  file
 ) {
   try {
     const userRef = collection(db, "users");
@@ -26,8 +27,19 @@ async function updateUserProfileInFirestore(
 
     if (querySnapshot.empty) {
       console.log("email not found");
+      return false;
     } else {
       const docRef = querySnapshot.docs[0].ref;
+
+      let profilePicURL = "";
+      if (file) {
+        const fileName = file.name;
+        const storageRef = ref(storage, `${email}/${fileName}`);
+        await uploadBytes(storageRef, file);
+        profilePicURL = await getDownloadURL(storageRef);
+        console.log("uploaded url", profilePicURL);
+      }
+
       await updateDoc(docRef, {
         displayName: `${firstName} ${lastName}`,
         phone: phone || "",
@@ -36,7 +48,7 @@ async function updateUserProfileInFirestore(
         updatedAt: new Date().toISOString(),
       });
       console.log("Document updated for Data of: ", email);
-      return true;
+      return profilePicURL;
     }
   } catch (error) {
     console.error("Error updating document: ", error);
@@ -45,6 +57,7 @@ async function updateUserProfileInFirestore(
 }
 
 const Profile = () => {
+  const [showToast, setShowToast] = useState(false);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [phone, setPhone] = useState("");
@@ -73,35 +86,36 @@ const Profile = () => {
     }
   }, [user]);
 
-  const handleProfilePicChange = (e) => {
+  const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      const imageUrl = URL.createObjectURL(file);
       setProfilePic(file);
-      setProfilePicURL(imageUrl);
+      const objectUrl = URL.createObjectURL(file);
+      setProfilePicURL(objectUrl); // Display image preview immediately
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    await updateUserProfileInFirestore(
+      user.email,
+      firstName,
+      lastName,
+      phone,
+      address,
+      profilePic
+    );
+    setShowToast(true);
+    setTimeout(() => {
+      setShowToast(false);
+    }, 3000);
     const updatedProfile = {
       displayName: `${firstName} ${lastName}`,
       photoURL: profilePicURL,
       phone: phone,
       address: address,
     };
-    // Update Firestore
-    const success = await updateUserProfileInFirestore(
-      user.email,
-      firstName,
-      lastName,
-      phone,
-      address,
-      profilePicURL
-    );
-    if (success) {
-      dispatch(updateUserProfile(updatedProfile));
-    }
+    dispatch(updateUserProfile(updatedProfile));
   };
 
   if (!user) {
@@ -131,7 +145,10 @@ const Profile = () => {
                       <div className="avatar mb-4">
                         <div className="w-24 rounded-full">
                           {profilePicURL ? (
-                            <img src={profilePicURL} alt="Profile" />
+                            <img
+                              src={profilePicURL || user.photoURL}
+                              alt="Profile"
+                            />
                           ) : (
                             <div className="bg-gray-200 w-full h-full flex items-center justify-center text-gray-500">
                               <svg
@@ -149,7 +166,7 @@ const Profile = () => {
                       <input
                         type="file"
                         accept="image/*"
-                        onChange={handleProfilePicChange}
+                        onChange={handleFileChange}
                         className="mb-4 file-input file-input-bordered file-input-neutral w-32 max-w-xs"
                       />
                     </div>
@@ -204,7 +221,7 @@ const Profile = () => {
                         </label>
                         <input
                           type="tel"
-                          value={phone}
+                          value={user.phone}
                           onChange={(e) => setPhone(e.target.value)}
                           className="input input-bordered w-full"
                         />
@@ -215,7 +232,7 @@ const Profile = () => {
                         </label>
                         <input
                           type="text"
-                          value={address}
+                          value={user.address}
                           onChange={(e) => setAddress(e.target.value)}
                           className="input input-bordered w-full"
                         />
@@ -252,6 +269,7 @@ const Profile = () => {
             </table>
           </div>
         </div>
+        {showToast && <Toast message="Profile Updated Successfully" />}
       </div>
     </ProtectedRoute>
   );

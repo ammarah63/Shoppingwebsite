@@ -18,7 +18,14 @@ import {
 } from "../../firebaseConfig";
 import { setUser } from "../../redux/slices/authSlice";
 import { Toast } from "@/components";
-import { collection, addDoc, getDocs, query, where } from "firebase/firestore";
+import {
+  collection,
+  addDoc,
+  getDocs,
+  query,
+  where,
+  getDoc,
+} from "firebase/firestore";
 
 async function addToFirestore(email, firstName, lastName) {
   try {
@@ -43,6 +50,29 @@ async function addToFirestore(email, firstName, lastName) {
     return false;
   }
 }
+
+const getUserDataFromFirestore = async (email) => {
+  try {
+    const userRef = collection(db, "users");
+    const q = query(userRef, where("email", "==", email));
+    const querySnapshot = await getDocs(q);
+
+    if (!querySnapshot.empty) {
+      let userData = null;
+      querySnapshot.forEach((doc) => {
+        userData = doc.data(); // Assuming there's only one document per email
+      });
+      console.log(userData);
+      return userData;
+    } else {
+      console.error("No such document!");
+      return null;
+    }
+  } catch (error) {
+    console.error("Error fetching user data:", error);
+    throw error;
+  }
+};
 
 const Login = (props) => {
   const [showToast, setShowToast] = useState(false);
@@ -77,11 +107,9 @@ const Login = (props) => {
     e.preventDefault();
     let valid = true;
     let errors = {};
-    const userRef = collection(db, "users");
-    const q = query(userRef, where("email", "==", email));
-    const querySnapshot = await getDocs(q);
+    const userDataFromFirestore = await getUserDataFromFirestore(email);
 
-    if (querySnapshot.empty) {
+    if (!userDataFromFirestore) {
       valid = false;
       errors.email = "No user registered with this email";
     }
@@ -101,11 +129,18 @@ const Login = (props) => {
         const result = await signInWithEmailAndPassword(auth, email, password);
         const user = result.user;
 
+        const userDataFromFirestore = await getUserDataFromFirestore(
+          user.email
+        );
+
         dispatch(
           setUser({
             uid: user.uid,
             email: user.email,
             displayName: user.displayName,
+            photoURL: user.photoURL,
+            address: userDataFromFirestore?.address || "",
+            phone: userDataFromFirestore?.phone || "",
           })
         );
 
@@ -181,7 +216,6 @@ const Login = (props) => {
       }
     }
   };
-
   const handleSignIn = async () => {
     setLoading(true); // Start loading indicator
     try {
@@ -205,11 +239,18 @@ const Login = (props) => {
           })
         );
       } else {
+        const userDataFromFirestore = await getUserDataFromFirestore(
+          user.email
+        );
+
         dispatch(
           setUser({
             uid: user.uid,
             email: user.email,
             displayName: user.displayName,
+            photoURL: user.photoURL,
+            address: userDataFromFirestore?.address || "",
+            phone: userDataFromFirestore?.phone || "",
           })
         );
       }
@@ -235,16 +276,32 @@ const Login = (props) => {
       const lastName =
         spaceIndex !== -1 ? displayName.slice(spaceIndex + 1) : "";
 
-      await addToFirestore(user.email, firstName, lastName);
+      const isNewUser = await addToFirestore(user.email, firstName, lastName);
+      if (isNewUser) {
+        // User data was added to Firestore (isNewUser is true)
+        dispatch(
+          setUser({
+            uid: user.uid,
+            email: user.email,
+            displayName: user.displayName,
+          })
+        );
+      } else {
+        const userDataFromFirestore = await getUserDataFromFirestore(
+          user.email
+        );
 
-      dispatch(
-        setUser({
-          uid: user.uid,
-          email: user.email,
-          displayName: user.displayName,
-        })
-      );
-
+        dispatch(
+          setUser({
+            uid: user.uid,
+            email: user.email,
+            displayName: user.displayName,
+            photoURL: user.photoURL,
+            address: userDataFromFirestore?.address || "",
+            phone: userDataFromFirestore?.phone || "",
+          })
+        );
+      }
       router.push("/");
     } catch (error) {
       console.error("Error signing in with Facebook", error);

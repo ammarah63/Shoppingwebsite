@@ -261,13 +261,16 @@ const Cart = (props) => {
                     <b>{user?.address || "No Address Provided"}</b>
                   </span>
                 </div>
-                <div className="flex justify-end my-5">
-                  <Link href={`/profile/${user.displayName}`}>
-                    <button className="btn btn-outline btn-secondary">
-                      Change Address
-                    </button>
-                  </Link>
-                </div>
+
+                {user && (
+                  <div className="flex justify-end my-5">
+                    <Link href={`/profile/${user.displayName}`}>
+                      <button className="btn btn-outline btn-secondary">
+                        Change Address
+                      </button>
+                    </Link>
+                  </div>
+                )}
               </div>
             </div>
             <div className="my-5 flex">

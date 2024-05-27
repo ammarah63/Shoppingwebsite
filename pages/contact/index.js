@@ -5,8 +5,16 @@ import { FaPhone } from "react-icons/fa";
 import { IoIosPin } from "react-icons/io";
 import { db } from "@/firebaseConfig";
 import { collection, addDoc } from "firebase/firestore";
+import { useFormik } from "formik";
+import * as Yup from "yup";
 
 const Map = dynamic(() => import("@/components/Map"), { ssr: false });
+
+const initialValues = {
+  Name: "",
+  Email: "",
+  Message: "",
+};
 
 function Contact(props) {
   const [name, setName] = useState("");
@@ -15,23 +23,42 @@ function Contact(props) {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isError, setIsError] = useState(false);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const docRef = await addDoc(collection(db, "contactus"), {
-        Name: name,
-        Email: email,
-        Message: message,
-      });
-      console.log("Document written with ID: ", docRef.id);
-      setIsSubmitted(true);
-      setIsError(false);
-    } catch (error) {
-      console.log("Error adding document: ", error);
-      setIsSubmitted(false);
-      setIsError(true);
-    }
-  };
+  const { values, errors, handleBlur, handleChange, handleSubmit, touched } =
+    useFormik({
+      initialValues: initialValues,
+      validationSchema: Yup.object({
+        Name: Yup.string()
+          .min(2, "Must be 2 characters or more")
+          .max(15, "Must be 15 characters or less")
+          .required("Required"),
+        Email: Yup.string().email("Invalid email address").required("Required"),
+        Message: Yup.string()
+          .min(20, "Must be 20 characters or more")
+          .max(50, "Must be 50 characters or less")
+          .required("Required"),
+      }),
+      onSubmit: (values) => {
+        alert(JSON.stringify(values, null, 2));
+      },
+    });
+
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   try {
+  //     const docRef = await addDoc(collection(db, "contactus"), {
+  //       Name: name,
+  //       Email: email,
+  //       Message: message,
+  //     });
+  //     console.log("Document written with ID: ", docRef.id);
+  //     setIsSubmitted(true);
+  //     setIsError(false);
+  //   } catch (error) {
+  //     console.log("Error adding document: ", error);
+  //     setIsSubmitted(false);
+  //     setIsError(true);
+  //   }
+  // };
 
   return (
     <div>
@@ -42,40 +69,48 @@ function Contact(props) {
           </span>
         </h1>
       </div>
-      <div className="px-20 grid grid-cols-1 lg:grid-cols-2 gap-1 mx-10">
-        <div className="px-5">
+      <div className="px-4 sm:px-10 md:px-20 grid grid-cols-1 lg:grid-cols-2 gap-1 mx-4 sm:mx-10">
+        <div className="px-2 sm:px-5">
           <div className="card w-full bg-base-100 shadow-xl">
             <div className="card-body">
-              <h2 className="font-extrabold text-center text-3xl">My Store</h2>
+              <h2 className="font-extrabold text-center text-2xl sm:text-3xl">
+                My Store
+              </h2>
               <div className="py-2 border-b-2">
                 <p className="flex">
                   <IoMdMail size={30} className="m-2" />
-                  <span className="m-2.5 text-xl font-bold">Email Address</span>
+                  <span className="m-2.5 text-lg sm:text-xl font-bold">
+                    Email Address
+                  </span>
                 </p>
-                <p className="mx-6">info@mystore.com</p>
+                <p className="mx-4 sm:mx-6">info@mystore.com</p>
               </div>
               <div className="py-2 border-b-2">
                 <p className="flex">
                   <FaPhone size={30} className="m-2" />
-                  <span className="m-2.5 text-xl font-bold">Phone</span>
+                  <span className="m-2.5 text-lg sm:text-xl font-bold">
+                    Phone
+                  </span>
                 </p>
-                <p className="mx-6">+92 343 4543211</p>
-                <p className="mx-6">+92 343 4543211</p>
+                <p className="mx-4 sm:mx-6">+92 343 4543211</p>
+                <p className="mx-4 sm:mx-6">+92 343 4543211</p>
               </div>
               <div className="py-2 border-b-2">
                 <p className="flex">
                   <IoIosPin size={30} className="m-2" />
-                  <span className="m-2.5 text-xl font-bold">Address</span>
+                  <span className="m-2.5 text-lg sm:text-xl font-bold">
+                    Address
+                  </span>
                 </p>
-                <p className="mx-6">My City, My Country</p>
+                <p className="mx-4 sm:mx-6">My City, My Country</p>
               </div>
               <div className="py-2">
                 <p className="flex">
-                  <span className="m-2.5 text-xl font-bold">
+                  <span className="m-2.5 text-lg sm:text-xl font-bold">
                     CUSTOMER SERVICE TIMINGS
                   </span>
                 </p>
-                <p className="mx-6">Monday to Saturday: 9 am to 6 pm</p>
+                <p className="mx-4 sm:mx-6">Monday to Saturday: 9 am to 6 pm</p>
               </div>
             </div>
           </div>
@@ -117,12 +152,17 @@ function Contact(props) {
                 >
                   Name
                 </label>
+                {errors.Name && touched.Name ? (
+                  <div className="text-center text-red-500">{errors.Name}</div>
+                ) : null}
                 <input
                   type="text"
-                  id="name"
-                  name="name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  id="Name"
+                  name="Name"
+                  value={values.Name}
+                  // onChange={(e) => setName(e.target.value)}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
                   className="mt-1 p-2 block w-full border border-gray-300 rounded-md shadow-sm sm:text-sm"
                   required
                 />
@@ -134,12 +174,16 @@ function Contact(props) {
                 >
                   Email
                 </label>
+                {errors.Email && touched.Email ? (
+                  <div className="text-center text-red-500">{errors.Email}</div>
+                ) : null}
                 <input
                   type="email"
-                  id="email"
-                  name="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  id="Email"
+                  name="Email"
+                  value={values.Email}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
                   className="mt-1 p-2 block w-full border border-gray-300 rounded-md shadow-sm sm:text-sm"
                   required
                 />
@@ -151,12 +195,18 @@ function Contact(props) {
                 >
                   Message
                 </label>
+                {errors.Message && touched.Message ? (
+                  <div className="text-center text-red-500">
+                    {errors.Message}
+                  </div>
+                ) : null}
                 <textarea
-                  id="message"
-                  name="message"
-                  value={message}
+                  id="Message"
+                  name="Message"
+                  value={values.Message}
                   rows={7}
-                  onChange={(e) => setMessage(e.target.value)}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
                   className="mt-1 p-2 block w-full border border-gray-300 rounded-md shadow-sm sm:text-sm"
                   required
                 />

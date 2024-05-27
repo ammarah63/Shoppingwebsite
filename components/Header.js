@@ -34,20 +34,25 @@ const Header = () => {
 
   const logout = async () => {
     try {
+      router.push("/login");
+
       await signOut(auth);
 
       console.log("User logged out successfully");
+      return true;
     } catch (error) {
       console.error("Error logging out:", error);
+      return false;
     }
   };
 
   const handleLogout = async () => {
-    router.push("/login");
-    await logout();
-
-    dispatch(clearUser());
-    dispatch(clearCart());
+    const issuccess = await logout();
+    if (issuccess) {
+      // Clear Redux state
+      dispatch(clearUser());
+      dispatch(clearCart());
+    }
   };
 
   return (
@@ -155,7 +160,7 @@ const Header = () => {
                 <summary className="m-1 btn btn-neutral">
                   {user.displayName}
                 </summary>
-                <ul className=" mr-5 shadow menu dropdown-content z-[1] bg-base-100 rounded-box w-36 text-neutral">
+                <ul className=" !mr-10 !me-10 shadow menu dropdown-content z-[1] bg-base-100 rounded-box w-36 text-neutral">
                   <li>
                     <Link href={`/profile/${user.displayName}`}>Profile</Link>
                   </li>
