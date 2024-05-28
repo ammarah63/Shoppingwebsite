@@ -23,14 +23,20 @@ function Contact(props) {
   const [message, setMessage] = useState("");
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isError, setIsError] = useState(false);
+  const form = useRef();
 
   const sendEmail = (e) => {
-    e.preventDefault();
+   // e.preventDefault();
 
     emailjs
-      .sendForm("service_9jkrlld", "template_3awftxs", form.current, {
-        publicKey: process.env.NEXT_PUBLIC_EMAILJS_API_KEY,
-      })
+      .sendForm(
+        process.env.NEXT_PUBLIC_EMAILJS_SERVICE,
+        process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE,
+        form.current,
+        {
+          publicKey: process.env.NEXT_PUBLIC_EMAILJS_API_KEY,
+        }
+      )
       .then(
         () => {
           console.log("SUCCESS!");
@@ -164,7 +170,7 @@ function Contact(props) {
             </div>
           )}
           {!isSubmitted && (
-            <form  onSubmit={handleSubmit}>
+            <form ref={form} onSubmit={handleSubmit}>
               <div className="mb-4">
                 <label
                   htmlFor="name"
