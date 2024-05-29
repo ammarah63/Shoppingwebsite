@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { ProductCard } from "@/components";
 import { useRouter } from "next/router";
+import { useTranslation } from "react-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 const usePagination = (itemsPerPage, items, initialPage = 1) => {
   const [currentPage, setCurrentPage] = useState(initialPage);
@@ -33,6 +35,7 @@ const Sale = (props) => {
   const totalProducts = 100;
   const productsPerPage = 12;
   const totalPages = Math.ceil(totalProducts / productsPerPage);
+  const { t } = useTranslation("common");
 
   const { currentItems, goToPage, currentPage } = usePagination(
     productsPerPage,
@@ -58,7 +61,7 @@ const Sale = (props) => {
       <div>
         <div className="m-2 mb-20 mt-20">
           <h1 className="text-4xl font-bold text-center">
-            <span className="bg-neutral text-neutral-content">Sale</span>
+            <span className="bg-neutral text-neutral-content">{t("sale")}</span>
           </h1>
         </div>
         <div className="px-20 grid lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 gap-4 mb-4">
@@ -105,7 +108,7 @@ const Sale = (props) => {
   );
 };
 
-export async function getServerSideProps({ query }) {
+export async function getServerSideProps({ query, locale }) {
   if (query.page) {
     console.log("context", query.page);
     const skip = (parseInt(query.page) - 1) * 12;
@@ -120,6 +123,7 @@ export async function getServerSideProps({ query }) {
     console.log("totalProducts", totalProducts);
     return {
       props: {
+       
         data,
         totalProducts,
       },
@@ -131,6 +135,7 @@ export async function getServerSideProps({ query }) {
   const totalProducts = data.total;
   return {
     props: {
+      ...(await serverSideTranslations(locale, ["common"])),
       data,
       totalProducts,
     },

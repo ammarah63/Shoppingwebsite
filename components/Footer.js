@@ -1,19 +1,23 @@
 import Link from 'next/link';
 import React from 'react';
-
+import { useTranslation } from "react-i18next";
 const Footer=(props)=> {
+    const { t } = useTranslation("common");
     return (
       <div>
         <footer className="footer footer-center mt-20 p-10 bg-neutral text-neutral-content rounded">
           <nav className="grid grid-flow-col gap-4">
             <Link href="/" className="link link-hover">
-              Home
+              {t("home")}
             </Link>
             <Link href="/shop" className="link link-hover">
-              Shop
+              {t("shop")}
             </Link>
             <Link href="/sale" className="link link-hover">
-              Sale
+              {t("sale")}
+            </Link>
+            <Link href="/contact" className="link link-hover">
+              {t("contactUs")}
             </Link>
           </nav>
           <nav>
@@ -54,7 +58,7 @@ const Footer=(props)=> {
             </div>
           </nav>
           <aside>
-            <p>Copyright © 2024 - All right reserved by My Store</p>
+            <p> {t("copyright")}</p>
           </aside>
         </footer>
       </div>

@@ -11,6 +11,8 @@ import {
   where,
   updateDoc,
 } from "firebase/firestore";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { useTranslation } from "react-i18next";
 
 async function updateUserProfileInFirestore(
   email,
@@ -65,7 +67,7 @@ const Profile = () => {
   const [profilePic, setProfilePic] = useState(null);
   const [profilePicURL, setProfilePicURL] = useState(null);
   const [warningMessage, setWarningMessage] = useState("");
-
+  const { t } = useTranslation("common");
   const user = useSelector((state) => state.auth.user);
   const dispatch = useDispatch();
 
@@ -128,7 +130,7 @@ const Profile = () => {
         <div className="flex items-center justify-center m-2 mb-10 mt-10">
           <h1 className="text-4xl font-bold">
             <span className="bg-neutral text-neutral-content flex items-center p-2">
-              My Profile
+              {t("profileTitle")}
             </span>
           </h1>
         </div>
@@ -175,60 +177,57 @@ const Profile = () => {
                     <div className="grid lg:grid-cols-2 md:grid-cols-2 sm:grid-cols-2 gap-4 mb-4">
                       <div className="form-control mb-4">
                         <label className="label">
-                          <span className="label-text">First Name</span>
+                          <span className="label-text">
+                            {t("firstName")}
+                          </span>
                         </label>
                         <input
                           type="text"
                           value={firstName}
-                          readOnly
+                          onChange={(e) => setFirstName(e.target.value)}
                           className="input input-bordered w-full"
-                          onClick={() =>
-                            setWarningMessage("First name can't be changed")
-                          }
                         />
                       </div>
                       <div className="form-control mb-4">
                         <label className="label">
-                          <span className="label-text">Last Name</span>
+                          <span className="label-text">
+                            {t("lastName")}
+                          </span>
                         </label>
                         <input
                           type="text"
                           value={lastName}
-                          readOnly
+                          onChange={(e) => setLastName(e.target.value)}
                           className="input input-bordered w-full"
-                          onClick={() =>
-                            setWarningMessage("Last name can't be changed")
-                          }
                         />
                       </div>
                       <div className="form-control mb-4">
                         <label className="label">
-                          <span className="label-text">Email Address</span>
+                          <span className="label-text">{t("emailLabel")}</span>
                         </label>
                         <input
                           type="email"
                           value={user.email}
                           readOnly
                           className="input input-bordered w-full"
-                          onClick={() =>
-                            setWarningMessage("Email can't be changed")
-                          }
                         />
                       </div>
                       <div className="form-control mb-4">
                         <label className="label">
-                          <span className="label-text">Phone Number</span>
+                          <span className="label-text">{t("phoneLabel")}</span>
                         </label>
                         <input
                           type="tel"
-                          value={user.phone}
+                          value={phone}
                           onChange={(e) => setPhone(e.target.value)}
                           className="input input-bordered w-full"
                         />
                       </div>
                       <div className="form-control mb-4">
                         <label className="label">
-                          <span className="label-text">Home Address</span>
+                          <span className="label-text">
+                            {t("addressLabel")}
+                          </span>
                         </label>
                         <input
                           type="text"
@@ -242,37 +241,48 @@ const Profile = () => {
                 </div>
                 <div className="flex justify-end">
                   <button type="submit" className="btn btn-neutral">
-                    Update Profile
+                    {t("updateProfileBtn")}
                   </button>
                 </div>
               </form>
+              {showToast && <Toast message={t("profileUpdatedToast")} />}
+            </div>
+          </div>
+          <div className="max-w-6xl mx-auto bg-white p-6 rounded-lg shadow-lg">
+            <h1 className="text-xl mt-5 text-neutral font-extrabold">
+              {t("myOrdersTitle")} 
+            </h1>
+            <div className="overflow-x-auto">
+              <table className="table">
+                <thead className="text-lg">
+                  <tr>
+                    <th></th>
+                    <th>{t("orderNumber")}</th>{" "}
+             
+                    <th>{t("placedOn")}</th> 
+                    <th>{t("items")}</th> 
+                    <th>{t("total")}</th> 
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
             </div>
           </div>
         </div>
-
-        <div className="max-w-6xl mx-auto bg-white p-6 rounded-lg shadow-lg">
-          <h1 className="text-xl mt-5 text-neutral font-extrabold">
-            My Orders
-          </h1>
-          <div className="overflow-x-auto">
-            <table className="table">
-              <thead className="text-lg">
-                <tr>
-                  <th></th>
-                  <th>Order #</th>
-                  <th>Placed On</th>
-                  <th>Items</th>
-                  <th>Total</th>
-                </tr>
-              </thead>
-              <tbody></tbody>
-            </table>
-          </div>
-        </div>
-        {showToast && <Toast message="Profile Updated Successfully" />}
       </div>
     </ProtectedRoute>
   );
 };
 
+export async function getServerSideProps({ locale }) {
+  const res = await fetch("https://dummyjson.com/products?limit=0");
+  const data = await res.json();
+  console.log(res);
+  return {
+    props: {
+      ...(await serverSideTranslations(locale, ["common"])),
+      data,
+    },
+  };
+}
 export default Profile;

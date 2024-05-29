@@ -1,7 +1,10 @@
 import React from "react";
 import { ProductCard, Slider } from "../components";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { useTranslation } from "react-i18next";
 
 const Home = (props) => {
+  const { t } = useTranslation("common");
   const { products } = props.data;
   const furnitureProducts = products.filter(
     (product) => product.category === "furniture"
@@ -15,8 +18,10 @@ const Home = (props) => {
       </div>
       <div className="m-2 mb-20 mt-10 ">
         <h2 className="text-4xl font-bold text-center">
-          <span className="bg-neutral text-neutral-content">Featured</span>{" "}
-          Products
+          <span className="bg-neutral text-neutral-content">
+            {t("featured")}
+          </span>{" "}
+          {t("products")}
         </h2>
       </div>
       <div className="px-20 grid lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 gap-4 mb-4">
@@ -44,12 +49,13 @@ const Home = (props) => {
 
 export default Home;
 
-export async function getServerSideProps() {
+export async function getServerSideProps({ locale }) {
   const res = await fetch("https://dummyjson.com/products?limit=0");
   const data = await res.json();
   console.log(res);
   return {
     props: {
+      ...(await serverSideTranslations(locale, ["common"])),
       data,
     },
   };

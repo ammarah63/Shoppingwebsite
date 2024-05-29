@@ -26,6 +26,8 @@ import {
   where,
   getDoc,
 } from "firebase/firestore";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { useTranslation } from "react-i18next";
 
 async function addToFirestore(email, firstName, lastName) {
   try {
@@ -88,6 +90,7 @@ const Login = (props) => {
   const router = useRouter();
   const dispatch = useDispatch();
   const user = useSelector((state) => state.auth.user);
+  const { t } = useTranslation("common");
 
   const validateEmail = (email) => {
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -312,13 +315,15 @@ const Login = (props) => {
 
   return (
     <>
-      <h1 className="text-3xl mt-5 text-center">Sign up | Login Form</h1>
+      <h1 className="text-3xl mt-5 text-center">{t("signupLoginFormTitle")}</h1>
       <div className="flex items-center justify-center min-h-80 pt-20">
         <div className="card w-[32rem] bg-neutral text-neutral-content">
           <div className="card-body items-center text-center">
-            <h1 className="card-title text-4xl my-5">My Store</h1>
+            <h1 className="card-title text-4xl my-5">{t("storeTitle")}</h1>
             {loading && (
-              <span className="loading loading-bars loading-lg"></span>
+              <span className="loading loading-bars loading-lg">
+                {t("loadingMessage")}
+              </span>
             )}
             {emaillogin ? (
               <>
@@ -336,7 +341,7 @@ const Login = (props) => {
                     <input
                       type="text"
                       className="grow"
-                      placeholder="Email"
+                      placeholder={t("email")}
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                     />
@@ -361,7 +366,7 @@ const Login = (props) => {
                     <input
                       type="text"
                       className="grow"
-                      placeholder="First Name"
+                      placeholder={t("firstName")}
                       value={firstName}
                       onChange={(e) => setFirstName(e.target.value)}
                     />
@@ -386,7 +391,7 @@ const Login = (props) => {
                     <input
                       type="text"
                       className="grow"
-                      placeholder="Last Name"
+                      placeholder={t("lastName")}
                       value={lastName}
                       onChange={(e) => setLastName(e.target.value)}
                     />
@@ -411,7 +416,7 @@ const Login = (props) => {
                     <input
                       type="password"
                       className="grow"
-                      placeholder="Password"
+                      placeholder={t("password")}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                     />
@@ -421,10 +426,10 @@ const Login = (props) => {
                   )}
 
                   <button className="btn btn-active btn-wide" type="submit">
-                    Sign up
+                    {t("signUp")}
                   </button>
                 </form>
-                <p className="text-xs ">If you already have an account</p>
+                <p className="text-xs ">{t("alreadyHaveAccount")}</p>
                 <button
                   className="btn btn-active btn-wide"
                   onClick={() => {
@@ -433,18 +438,16 @@ const Login = (props) => {
                   }}
                 >
                   <MdEmail size={30} color="#463AA2" />
-                  Login with Email
+                  {t("loginWithEmail")}
                 </button>
-                <p className="text-xs ">Or</p>
+                <p className="text-xs ">{t("or")}</p>
                 <button
                   className="btn btn-active btn-wide"
                   onClick={() => setEmaillogin(false)}
                 >
-                  Sign in with Facebook Or Google
+                  {t("signInWithFacebookOrGoogle")}
                 </button>
-                <p className="text-xs my-5">
-                  By Creating an account you agree to our Terms & Conditions.
-                </p>
+                <p className="text-xs my-5">{t("agreeToTerms")}</p>
               </>
             ) : emaillogin1 ? (
               <>
@@ -462,7 +465,7 @@ const Login = (props) => {
                     <input
                       type="text"
                       className="grow"
-                      placeholder="Email or Username"
+                      placeholder={t("email")}
                       value={emailOrUsername}
                       onChange={(e) => setEmailOrUsername(e.target.value)}
                     />
@@ -486,77 +489,78 @@ const Login = (props) => {
                     <input
                       type="password"
                       className="grow"
-                      placeholder="Password"
+                      placeholder={t("password")}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                     />
                   </label>
                   {errors.code && <p className="text-red-500">{errors.code}</p>}
-                  <button
-                    className="btn btn-active btn-wide"
-                    type="submit"
-                    // onClick={handleEmailSignIn}
-                  >
-                    Login
+                  <button className="btn btn-active btn-wide" type="submit">
+                    {t("login")}
                   </button>
                 </form>
-                <p className="text-xs my-5">
-                  By logging in, you agree to our Terms & Conditions.
-                </p>
+                <p className="text-xs my-5">{t("agreeToTerms")}</p>
                 <button
                   className="btn btn-active btn-wide"
                   onClick={() => setEmaillogin1(false)}
                 >
-                  Back
+                  {t("back")}
                 </button>
               </>
             ) : (
               <>
-                <p className="text-sm ">Sign in using</p>
+                <p className="text-sm ">{t("signInUsing")}</p>
                 <button
                   className="btn btn-active btn-wide"
                   onClick={handleSignIn}
                 >
-                  <FcGoogle size={30} /> Sign in with Google
+                  <FcGoogle size={30} /> {t("signInWithGoogle")}
                 </button>
-                <p className="text-xs ">Or</p>
+                <p className="text-xs ">{t("or")}</p>
                 <button
                   className="btn btn-active btn-wide"
                   onClick={handleFacebookSignIn}
                 >
                   <IoLogoFacebook size={30} className="icon" color="#1877F2" />{" "}
-                  Sign in with Facebook
+                  {t("signInWithFacebook")}
                 </button>
-                <p className="text-xs ">Or</p>
+                <p className="text-xs ">{t("or")}</p>
                 <button
                   className="btn btn-active btn-wide"
                   onClick={() => setEmaillogin(true)}
                 >
                   <MdEmail size={30} />
-                  Sign up with Email
+                  {t("signUpWithEmail")}
                 </button>
-                <p className="text-xs ">If you already have an account</p>
+                <p className="text-xs ">{t("alreadyHaveAccount")}</p>
                 <button
                   className="btn btn-active btn-wide"
                   onClick={() => setEmaillogin1(true)}
                 >
                   <MdEmail size={30} color="#463AA2" />
-                  Login with Email
+                  {t("loginWithEmail")}
                 </button>
-                <p className="text-xs my-5">
-                  Make sure you&apos;re signed in to the browser with the same
-                  Google, email or Facebook account you want to login.
-                </p>
+                <p className="text-xs my-5">{t("makeSureSignedIn")}</p>
               </>
             )}
           </div>
         </div>
       </div>
-      {/* </>
-      )} */}
-      {showToast && <Toast message="Sign Up Successfull" />}
+      {showToast && <Toast message={t("signUpSuccess")} />}
     </>
   );
 };
+
+export async function getServerSideProps({ locale }) {
+  const res = await fetch("https://dummyjson.com/products?limit=0");
+  const data = await res.json();
+  console.log(res);
+  return {
+    props: {
+      ...(await serverSideTranslations(locale, ["common"])),
+      data,
+    },
+  };
+}
 
 export default Login;

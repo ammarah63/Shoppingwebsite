@@ -8,6 +8,8 @@ import { collection, addDoc } from "firebase/firestore";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import emailjs from "@emailjs/browser";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { useTranslation } from "react-i18next";
 
 const Map = dynamic(() => import("@/components/Map"), { ssr: false });
 
@@ -24,6 +26,7 @@ function Contact(props) {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isError, setIsError] = useState(false);
   const form = useRef();
+  const { t } = useTranslation("common");
 
   const sendEmail = (e) => {
    // e.preventDefault();
@@ -91,7 +94,7 @@ function Contact(props) {
       <div className="flex items-center justify-center m-2 mb-10 mt-10">
         <h1 className="text-4xl font-bold">
           <span className="bg-neutral text-neutral-content flex items-center p-2">
-            Contact Us
+            {t("contactUs")}
           </span>
         </h1>
       </div>
@@ -100,13 +103,13 @@ function Contact(props) {
           <div className="card w-full bg-base-100 shadow-xl">
             <div className="card-body">
               <h2 className="font-extrabold text-center text-2xl sm:text-3xl">
-                My Store
+                {t("myStore")}
               </h2>
               <div className="py-2 border-b-2">
                 <p className="flex">
                   <IoMdMail size={30} className="m-2" />
                   <span className="m-2.5 text-lg sm:text-xl font-bold">
-                    Email Address
+                    {t("emailAddress")}
                   </span>
                 </p>
                 <p className="mx-4 sm:mx-6">info@mystore.com</p>
@@ -115,7 +118,7 @@ function Contact(props) {
                 <p className="flex">
                   <FaPhone size={30} className="m-2" />
                   <span className="m-2.5 text-lg sm:text-xl font-bold">
-                    Phone
+                    {t("phone")}
                   </span>
                 </p>
                 <p className="mx-4 sm:mx-6">+92 343 4543211</p>
@@ -125,7 +128,7 @@ function Contact(props) {
                 <p className="flex">
                   <IoIosPin size={30} className="m-2" />
                   <span className="m-2.5 text-lg sm:text-xl font-bold">
-                    Address
+                    {t("address")}
                   </span>
                 </p>
                 <p className="mx-4 sm:mx-6">My City, My Country</p>
@@ -133,10 +136,10 @@ function Contact(props) {
               <div className="py-2">
                 <p className="flex">
                   <span className="m-2.5 text-lg sm:text-xl font-bold">
-                    CUSTOMER SERVICE TIMINGS
+                    {t("customerServiceTimings")}
                   </span>
                 </p>
-                <p className="mx-4 sm:mx-6">Monday to Saturday: 9 am to 6 pm</p>
+                <p className="mx-4 sm:mx-6">{t("timings")}</p>
               </div>
             </div>
           </div>
@@ -146,28 +149,24 @@ function Contact(props) {
         </div>
       </div>
       <div className="pt-20">
-        <p className="text-xs text-center mb-6">Got Questions?</p>
+        <p className="text-xs text-center mb-6">{t("gotQuestions")}</p>
         <h1 className="text-center text-4xl font-extrabold my-3">
-          Contact Form
+          {t("contactForm")}
         </h1>
       </div>
       <div className="flex items-center justify-center min-h-96">
         <div className="w-full max-w-lg p-10 bg-white shadow-xl rounded-lg">
           <h2 className="text-3xl font-extrabold text-center mb-4">
-            Write to Us
+            {t("writeToUs")}
           </h2>
-          <p className="text-xs text-center mb-6">
-            Fill in the form to send us a message
-          </p>
+          <p className="text-xs text-center mb-6">{t("fillForm")}</p>
           {isSubmitted && (
             <div className="text-center text-green-500">
-              We have received your message.
+              {t("receivedMessage")}
             </div>
           )}
           {isError && (
-            <div className="text-center text-red-500">
-              The message did not submit due to some error.
-            </div>
+            <div className="text-center text-red-500">{t("submitError")}</div>
           )}
           {!isSubmitted && (
             <form ref={form} onSubmit={handleSubmit}>
@@ -176,17 +175,18 @@ function Contact(props) {
                   htmlFor="name"
                   className="block text-sm font-medium text-gray-700"
                 >
-                  Name
+                  {t("name")}
                 </label>
                 {errors.Name && touched.Name ? (
-                  <div className="text-center text-red-500">{errors.Name}</div>
+                  <div className="text-center text-red-500">
+                    {t(errors.Name)}
+                  </div>
                 ) : null}
                 <input
                   type="text"
                   id="Name"
                   name="Name"
                   value={values.Name}
-                  // onChange={(e) => setName(e.target.value)}
                   onChange={handleChange}
                   onBlur={handleBlur}
                   className="mt-1 p-2 block w-full border border-gray-300 rounded-md shadow-sm sm:text-sm"
@@ -198,10 +198,12 @@ function Contact(props) {
                   htmlFor="email"
                   className="block text-sm font-medium text-gray-700"
                 >
-                  Email
+                  {t("email")}
                 </label>
                 {errors.Email && touched.Email ? (
-                  <div className="text-center text-red-500">{errors.Email}</div>
+                  <div className="text-center text-red-500">
+                    {t(errors.Email)}
+                  </div>
                 ) : null}
                 <input
                   type="email"
@@ -219,11 +221,11 @@ function Contact(props) {
                   htmlFor="message"
                   className="block text-sm font-medium text-gray-700"
                 >
-                  Message
+                  {t("message")}
                 </label>
                 {errors.Message && touched.Message ? (
                   <div className="text-center text-red-500">
-                    {errors.Message}
+                    {t(errors.Message)}
                   </div>
                 ) : null}
                 <textarea
@@ -242,7 +244,7 @@ function Contact(props) {
                   type="submit"
                   className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-neutral"
                 >
-                  Send Message
+                  {t("sendMessage")}
                 </button>
               </div>
             </form>
@@ -251,6 +253,18 @@ function Contact(props) {
       </div>
     </div>
   );
+}
+
+export async function getServerSideProps({ locale }) {
+  const res = await fetch("https://dummyjson.com/products?limit=0");
+  const data = await res.json();
+  console.log(res);
+  return {
+    props: {
+      ...(await serverSideTranslations(locale, ["common"])),
+      data,
+    },
+  };
 }
 
 export default Contact;

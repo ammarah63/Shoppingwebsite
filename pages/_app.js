@@ -1,16 +1,19 @@
 import "@/styles/globals.css";
 import { Footer, Header } from "@/components";
 import { Providers } from "@/redux/providers";
-import store, { persistor } from "@/redux/store"; 
+import store, { persistor } from "@/redux/store";
 import { PersistGate } from "redux-persist/integration/react";
 import "leaflet/dist/leaflet.css";
+import { appWithTranslation } from "next-i18next";
 
-export default function App({ Component, pageProps }) {
+
+function App({ Component, pageProps }) {
+  
   return (
     <Providers store={store}>
       <PersistGate loading={null} persistor={persistor}>
         <div className="flex flex-col min-h-screen">
-          <Header />
+          <Header/>
 
           <Component {...pageProps} className="flex-1" />
 
@@ -20,3 +23,6 @@ export default function App({ Component, pageProps }) {
     </Providers>
   );
 }
+export default appWithTranslation(App);
+
+

@@ -8,6 +8,8 @@ import {
   addcartProducts,
 } from "@/redux/slices/cartSlice";
 import { useSelector, useDispatch } from "react-redux";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { useTranslation } from "react-i18next";
 
 const Cart = (props) => {
   const productData = useSelector((data) => data.cart.cartProducts);
@@ -17,6 +19,7 @@ const Cart = (props) => {
   const [subtotal, setSubtotal] = useState(0);
   const [shipping, setShipping] = useState(0);
   const dispatch = useDispatch();
+   const { t } = useTranslation("common");
 
   const handleRemoveProduct = (productID) => {
     dispatch(removecartProducts({ productID }));
@@ -129,7 +132,7 @@ const Cart = (props) => {
         <h1 className="text-4xl font-bold">
           <span className="bg-neutral text-neutral-content flex items-center p-2">
             <FaShoppingCart fontSize={40} className="mr-2" />
-            My Cart
+            {t("myCart")}
           </span>
         </h1>
       </div>
@@ -142,10 +145,10 @@ const Cart = (props) => {
                 <thead className="text-lg ">
                   <tr>
                     <th></th>
-                    <th>Product</th>
-                    <th>Price</th>
-                    <th>Quantity</th>
-                    <th>Remove</th>
+                    <th>{t("product")}</th>
+                    <th>{t("price")}</th>
+                    <th>{t("quantity")}</th>
+                    <th>{t("remove")}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -232,13 +235,13 @@ const Cart = (props) => {
             </div>
           </div>
           <div className="bg-gray-200 p-4 col-span-1 rounded-lg">
-            <h2 className="text-2xl font-bold">Cart Total</h2>
+            <h2 className="text-2xl font-bold">{t("cartTotal")}</h2>
             <div className="my-5 flex">
-              <p className="text-lg font-semibold flex-1">Subtotal:</p>
+              <p className="text-lg font-semibold flex-1">{t("subtotal")}:</p>
               <p className="text-lg font-medium justify-end">{subtotal}$</p>
             </div>
             <div className="my-5 flex">
-              <p className="text-lg font-semibold flex-1">Shipping</p>
+              <p className="text-lg font-semibold flex-1">{t("shipping")}</p>
               <div className="text-lg font-medium justify-end">
                 <div className="form-control">
                   <label className="label cursor-pointer">
@@ -249,16 +252,16 @@ const Cart = (props) => {
                       checked
                     />
                     <span className="label-text">
-                      Flat Rate: <b>{shipping}$</b>
+                      {t("flatRate")}: <b>{shipping}$</b>
                     </span>
                   </label>
                 </div>
                 <div className="flex">
                   <p className="label-text text-base flex-1 me-2">
-                    Shipping To:
+                    {t("shippingTo")}:
                   </p>
                   <span className="label-text justify-end mt-0.5">
-                    <b>{user?.address || "No Address Provided"}</b>
+                    <b>{user?.address || t("noAddressProvided")}</b>
                   </span>
                 </div>
 
@@ -266,7 +269,7 @@ const Cart = (props) => {
                   <div className="flex justify-end my-5">
                     <Link href={`/profile/${user.displayName}`}>
                       <button className="btn btn-outline btn-secondary">
-                        Change Address
+                        {t("changeAddress")}
                       </button>
                     </Link>
                   </div>
@@ -274,14 +277,14 @@ const Cart = (props) => {
               </div>
             </div>
             <div className="my-5 flex">
-              <p className="text-lg font-semibold flex-1">Total:</p>
+              <p className="text-lg font-semibold flex-1">{t("total")}:</p>
               <p className="text-lg font-medium justify-end">
                 {subtotal + shipping}$
               </p>
             </div>
             <div className="my-5">
               <button className="btn btn-neutral text-lg my-3 w-full">
-                Proceed to Checkout
+                {t("proceedToCheckout")}
               </button>
             </div>
           </div>
@@ -290,5 +293,18 @@ const Cart = (props) => {
     </div>
   );
 };
+
+
+export async function getServerSideProps({ locale }) {
+  const res = await fetch("https://dummyjson.com/products?limit=0");
+  const data = await res.json();
+  console.log(res);
+  return {
+    props: {
+      ...(await serverSideTranslations(locale, ["common"])),
+      data,
+    },
+  };
+}
 
 export default Cart;

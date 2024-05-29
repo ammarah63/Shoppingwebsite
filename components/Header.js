@@ -13,14 +13,20 @@ import { useSelector, useDispatch } from "react-redux";
 import { auth } from "@/firebaseConfig";
 import { clearUser } from "@/redux/slices/authSlice";
 import { clearCart } from "@/redux/slices/cartSlice";
-
+import { useTranslation } from "react-i18next";
 const Header = () => {
   const [cartNo, setCartNo] = useState(0);
   const dispatch = useDispatch();
   const productData = useSelector((data) => data.cart.cartProducts);
   const user = useSelector((state) => state.auth.user);
   const router = useRouter();
+  const { t } = useTranslation("common");
 
+  const handleChange = (lang) => {
+  const currentRoute = router.pathname; 
+  const newPath = `/${lang}${currentRoute}`; 
+  router.push(newPath, undefined, { locale: lang }); 
+  };
   useEffect(() => {
     if (productData) {
       const uniqueProductIDs = new Set();
@@ -60,15 +66,32 @@ const Header = () => {
       <div className="navbar bg-neutral text-neutral-content ">
         <div className="navbar-start">
           <Link href="/" className="btn btn-ghost text-xl">
-            My Store
+            {t("myStore")}
           </Link>
         </div>
         <div className="navbar-center hidden lg:flex">
-          <p className="text-sm font-bold">
-            Shipping Worldwide | Free shipping over 500$ purchase
-          </p>
+          <p className="text-sm font-bold">{t("shippingInfo")}</p>
         </div>
         <div className="navbar-end">
+          <button
+            onClick={() => handleChange("en")}
+            className="btn-ghost btn-sm text-neutral-content border-2 border-neutral-content p-1 m-1 mx-3"
+          >
+            en
+          </button>
+          <button
+            onClick={() => handleChange("ur")}
+            className="btn-ghost btn-sm text-neutral-content border-2 border-neutral-content p-1 m-1 mx-3"
+          >
+            ur
+          </button>
+          <button
+            onClick={() => handleChange("zh")}
+            className="btn-ghost btn-sm text-neutral-content border-2 border-neutral-content p-1 m-1 mx-3"
+          >
+            zh
+          </button>
+
           <button className="btn-sm m-1">
             <FaFacebookSquare fontSize={20} />
           </button>
@@ -105,16 +128,16 @@ const Header = () => {
               className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
             >
               <li>
-                <Link href="/">Home</Link>
+                <Link href="/"> {t("home")}</Link>
               </li>
               <li>
-                <Link href="/shop">Shop</Link>
+                <Link href="/shop"> {t("shop")}</Link>
               </li>
               <li>
-                <Link href="/sale">Sale</Link>
+                <Link href="/sale"> {t("sale")}</Link>
               </li>
               <li>
-                <Link href="/contact">Contact Us</Link>
+                <Link href="/contact"> {t("contactUs")}</Link>
               </li>
             </ul>
           </div>
@@ -123,22 +146,22 @@ const Header = () => {
           <ul className="menu menu-horizontal px-1">
             <li>
               <Link href="/" className="link link-hover">
-                Home
+                {t("home")}
               </Link>
             </li>
             <li>
               <Link href="/shop" className="link link-hover">
-                Shop
+                {t("shop")}
               </Link>
             </li>
             <li>
               <Link href="/sale" className="link link-hover">
-                Sale
+                {t("sale")}
               </Link>
             </li>
             <li>
               <Link href="/contact" className="link link-hover">
-                Contact Us
+                {t("contactUs")}
               </Link>
             </li>
           </ul>
@@ -162,10 +185,12 @@ const Header = () => {
                 </summary>
                 <ul className=" !mr-10 !me-10 shadow menu dropdown-content z-[1] bg-base-100 rounded-box w-36 text-neutral">
                   <li>
-                    <Link href={`/profile/${user.displayName}`}>Profile</Link>
+                    <Link href={`/profile/${user.displayName}`}>
+                      {t("profile")}
+                    </Link>
                   </li>
                   <li>
-                    <button onClick={handleLogout}>Logout</button>
+                    <button onClick={handleLogout}> {t("logout")}</button>
                   </li>
                 </ul>
               </details>
@@ -203,7 +228,7 @@ const Header = () => {
           ) : (
             <Link href="/login" className="link link-hover">
               <button className="flex btn-sm m-1 me-5 relative text-xl">
-                <FaUser className="mx-2 mt-1" /> Login
+                <FaUser className="mx-2 mt-1" /> {t("login")}
               </button>
             </Link>
           )}

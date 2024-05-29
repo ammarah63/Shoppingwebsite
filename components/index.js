@@ -3,7 +3,7 @@ import Footer from "./Footer";
 import Slider from "./Slider";
 import ProductCard from "./product-card";
 import Toast from "./Toast";
-
+//import LanguageSwitcher from "./LanguageSwitcher";
 import Map from "./Map";
 import ProtectedRoute from "./ProtectedRoute";
 
