@@ -4,6 +4,7 @@ import { Providers } from "@/redux/providers";
 import store, { persistor } from "@/redux/store";
 import { PersistGate } from "redux-persist/integration/react";
 import "leaflet/dist/leaflet.css";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { appWithTranslation } from "next-i18next";
 
 
@@ -23,6 +24,16 @@ function App({ Component, pageProps }) {
     </Providers>
   );
 }
+
+export const getServerSideProps = async ({ locale }) => ({
+  props: {
+    ...(await serverSideTranslations(locale, ["common"], null, [
+      "en",
+      "ur",
+      "zh"
+    ])),
+  },
+});
 export default appWithTranslation(App);
 
 
