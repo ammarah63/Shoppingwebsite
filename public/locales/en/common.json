@@ -87,9 +87,27 @@
   "emailWarning": "Email can't be changed",
   "profileUpdatedToast": "Profile Updated Successfully",
 
- 
   "orderNumber": "Order #",
   "placedOn": "Placed On",
-  "items": "Items"
- 
+  "items": "Items",
+
+  "addToCart": "Add to Cart",
+  "loginToAdd": "Login to add to cart",
+  "productReviews": "Product Reviews",
+  "stars": "stars",
+  "outOf": "out of",
+  "productTitle": "Product Title",
+  "productDescription": "Description",
+  "productCategory": "Category",
+  "productBrand": "Brand",
+  "color": "Color",
+  "size": "Size",
+  "inStock": "In Stock",
+  "deliveryDetails": "Delivery Details",
+  "loginToAddCart": "Login to add to cart",
+  "people": "People",
+  "alsoPurchased": "Also Purchased",
+  "productAddedToCart": "Product Added to the Cart",
+  "seeDetails": "See Details"
+
 }

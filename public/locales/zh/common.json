@@ -88,5 +88,24 @@
   "profileUpdatedToast": "个人资料更新成功",
   "orderNumber": "订单编号",
   "placedOn": "下单时间",
-  "items": "商品"
+  "items": "商品",
+
+  "addToCart": "添加到购物车",
+  "loginToAdd": "登录以添加到购物车",
+  "productReviews": "产品评论",
+  "stars": "星级",
+  "outOf": "五分制",
+  "productTitle": "产品标题",
+  "productDescription": "描述",
+  "productCategory": "类别",
+  "productBrand": "品牌",
+  "color": "颜色",
+  "size": "尺寸",
+  "inStock": "现货",
+  "deliveryDetails": "交货细节",
+  "loginToAddCart": "登录以添加到购物车",
+  "people": "人们",
+  "alsoPurchased": "也购买过",
+  "productAddedToCart": "产品已添加到购物车",
+  "seeDetails": "查看详情"
 }

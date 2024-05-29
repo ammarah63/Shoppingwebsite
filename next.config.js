@@ -3,6 +3,7 @@ module.exports = {
   i18n,
   pageExtensions: ["mdx", "md", "jsx", "js", "tsx", "ts"],
   images: {
+    domains: ["cdn.dummyjson.com"],
     remotePatterns: [
       {
         protocol: "https",

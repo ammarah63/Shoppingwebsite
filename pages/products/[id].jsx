@@ -4,6 +4,9 @@ import { ProductCard, Toast } from "../../components";
 import { useRouter } from "next/router";
 import { useSelector, useDispatch } from "react-redux";
 import { addcartProducts } from "@/redux/slices/cartSlice";
+import { useTranslation } from "react-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+
 
 const ProductDetail = (props) => {
   const router = useRouter();
@@ -16,6 +19,7 @@ const ProductDetail = (props) => {
   const user = useSelector((state) => state.auth.user);
   const [selectedImage, setSelectedImage] = useState(productData.productImage);
   const [showMagnified, setShowMagnified] = useState(false);
+ const { t } = useTranslation("common");
 
   const handleImageClick = (image) => {
     setSelectedImage(image);
@@ -240,7 +244,7 @@ const ProductDetail = (props) => {
                 4.95
               </p>
               <p className="ms-1 text-sm font-medium text-gray-500 dark:text-gray-400">
-                out of
+                {t("outOf")}
               </p>
               <p className="ms-1 text-sm font-medium text-gray-500 dark:text-gray-400">
                 5
@@ -248,21 +252,21 @@ const ProductDetail = (props) => {
             </div>
           </div>
           <div className="my-5">
-            <h2 className="text-2xl font-bold">Description</h2>
+            <h2 className="text-2xl font-bold">{t("productDescription")}</h2>
             <p>{productData.productDescription}</p>
           </div>
           <div className="flex">
             <h2 className="text-lg font-bold flex-1">
-              Category: {productData.productCategory}
+              {t("productCategory")}: {productData.productCategory}
             </h2>
             <h2 className="text-lg font-semibold justify-end">
               {" "}
-              Brand: {productData.productBrand}
+              {t("productBrand")}: {productData.productBrand}
             </h2>
           </div>
           <div>
             {" "}
-            <h2 className="text-2xl font-bold">Color</h2>
+            <h2 className="text-2xl font-bold"> {t("color")}</h2>
             <button className="btn btn-circle  m-3 btn-primary"></button>
             <button className="btn btn-circle  m-3 btn-secondary"></button>
             <button className="btn btn-circle  m-3 btn-neutral"></button>
@@ -270,7 +274,7 @@ const ProductDetail = (props) => {
             <button className="btn btn-circle  m-3 btn-success"></button>
           </div>
           <div>
-            <h2 className="text-2xl font-bold">Size</h2>
+            <h2 className="text-2xl font-bold"> {t("size")}</h2>
             <button className="btn btn-secondary m-3 w-20">XL</button>
             <button className="btn btn-secondary m-3 w-20">L</button>
             <button className="btn btn-secondary m-3 w-20">MD</button>
@@ -280,13 +284,13 @@ const ProductDetail = (props) => {
           <div className="my-5">
             <button className="btn  btn-neutral m-3 w-full" onClick={AddToCart}>
               {" "}
-              <FaShoppingCart fontSize={20} /> Add to Cart
+              <FaShoppingCart fontSize={20} /> {t("addToCart")}
             </button>
             {user ? (
               <></>
             ) : (
               <>
-                <p className="text-xs text-center">Login to add to cart</p>
+                <p className="text-xs text-center"> {t("loginToAdd")}</p>
               </>
             )}
           </div>
@@ -295,7 +299,7 @@ const ProductDetail = (props) => {
       <div className="p-10">
         <h1 className="text-4xl font-bold text-left">
           <span className="bg-neutral text-neutral-content">
-            Product Reviews
+            {t("productReviews")}
           </span>
         </h1>
         <div className="h-80 overflow-y-scroll my-10">
@@ -357,7 +361,7 @@ const ProductDetail = (props) => {
                     4.95
                   </p>
                   <p className="ms-1 text-sm font-medium text-gray-500 dark:text-gray-400">
-                    out of
+                    {t("outOf")}
                   </p>
                   <p className="ms-1 text-sm font-medium text-gray-500 dark:text-gray-400">
                     5
@@ -428,7 +432,7 @@ const ProductDetail = (props) => {
                     4.95
                   </p>
                   <p className="ms-1 text-sm font-medium text-gray-500 dark:text-gray-400">
-                    out of
+                    {t("outOf")}
                   </p>
                   <p className="ms-1 text-sm font-medium text-gray-500 dark:text-gray-400">
                     5
@@ -499,7 +503,7 @@ const ProductDetail = (props) => {
                     4.95
                   </p>
                   <p className="ms-1 text-sm font-medium text-gray-500 dark:text-gray-400">
-                    out of
+                    {t("outOf")}
                   </p>
                   <p className="ms-1 text-sm font-medium text-gray-500 dark:text-gray-400">
                     5
@@ -519,8 +523,10 @@ const ProductDetail = (props) => {
       <div>
         <div className=" px-20 py-10">
           <h1 className="text-4xl font-bold text-center">
-            <span className="bg-neutral text-neutral-content me-3">People</span>
-            also Purchased
+            <span className="bg-neutral text-neutral-content me-3">
+              {t("people")}
+            </span>
+            {t("alsoPurchased")}
           </h1>
           <div className=" grid lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 gap-4 mb-2">
             {beautyProducts.map((product, index) => (
@@ -543,18 +549,19 @@ const ProductDetail = (props) => {
           </div>
         </div>
       </div>
-      {showToast && <Toast message="Product Added to the Cart" />}
+      {showToast && <Toast message={t("productAddedToCart")} />}
     </div>
   );
 };
 
 export default ProductDetail;
 
-export async function getServerSideProps() {
+export async function getServerSideProps({ locale }) {
   const res = await fetch("https://dummyjson.com/products?limit=0");
   const data = await res.json();
   return {
     props: {
+       ...(await serverSideTranslations(locale, ["common"])),
       data,
     },
   };

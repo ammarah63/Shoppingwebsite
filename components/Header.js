@@ -22,11 +22,17 @@ const Header = () => {
   const router = useRouter();
   const { t } = useTranslation("common");
 
-  const handleChange = (lang) => {
-  const currentRoute = router.pathname; 
-  const newPath = `/${lang}${currentRoute}`; 
-  router.push(newPath, undefined, { locale: lang }); 
-  };
+   const handleChange = (lang) => {
+     const currentRoute = router.asPath; 
+     const newPath = currentRoute.replace(/^\/[a-z]{2}(\/|$)/, `/${lang}$1`); 
+     router.push(newPath, undefined, { locale: lang });
+   };
+
+  // const handleChange = (lang) => {
+  // const currentRoute = router.pathname; 
+  // const newPath = `/${lang}${currentRoute}`; 
+  // router.push(newPath, undefined, { locale: lang }); 
+  // };
   useEffect(() => {
     if (productData) {
       const uniqueProductIDs = new Set();

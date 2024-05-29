@@ -26,10 +26,10 @@ function Contact(props) {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isError, setIsError] = useState(false);
   const form = useRef();
-  const { t } = useTranslation("common");
+  const { t, i18n } = useTranslation("common");
 
   const sendEmail = (e) => {
-   // e.preventDefault();
+    // e.preventDefault();
 
     emailjs
       .sendForm(
@@ -89,6 +89,30 @@ function Contact(props) {
       },
     });
 
+  const getLanguageStyles = (language) => {
+    switch (language) {
+      case "en":
+        return {
+          fontSize: "14px",
+          letterSpacing: "2px",
+        };
+      case "zh":
+        return {
+          fontSize: "17px",
+          letterSpacing: "1px",
+        };
+      case "ur":
+        return {
+          fontSize: "18px",
+          letterSpacing: "0px",
+        };
+      default:
+        return {};
+    }
+  };
+
+  const languageStyles = getLanguageStyles(i18n.language);
+
   return (
     <div>
       <div className="flex items-center justify-center m-2 mb-10 mt-10">
@@ -106,40 +130,44 @@ function Contact(props) {
                 {t("myStore")}
               </h2>
               <div className="py-2 border-b-2">
-                <p className="flex">
+                <p className="flex" style={languageStyles}>
                   <IoMdMail size={30} className="m-2" />
-                  <span className="m-2.5 text-lg sm:text-xl font-bold">
-                    {t("emailAddress")}
-                  </span>
+                  <span className="m-2.5  font-bold">{t("emailAddress")}</span>
                 </p>
-                <p className="mx-4 sm:mx-6">info@mystore.com</p>
+                <p className="mx-4 sm:mx-6" style={languageStyles}>
+                  info@mystore.com
+                </p>
               </div>
               <div className="py-2 border-b-2">
-                <p className="flex">
+                <p className="flex" style={languageStyles}>
                   <FaPhone size={30} className="m-2" />
-                  <span className="m-2.5 text-lg sm:text-xl font-bold">
-                    {t("phone")}
-                  </span>
+                  <span className="m-2.5  font-bold">{t("phone")}</span>
                 </p>
-                <p className="mx-4 sm:mx-6">+92 343 4543211</p>
-                <p className="mx-4 sm:mx-6">+92 343 4543211</p>
+                <p className="mx-4 sm:mx-6" style={languageStyles}>
+                  +92 343 4543211
+                </p>
+                <p className="mx-4 sm:mx-6" style={languageStyles}>
+                  +92 343 4543211
+                </p>
               </div>
               <div className="py-2 border-b-2">
-                <p className="flex">
+                <p className="flex" style={languageStyles}>
                   <IoIosPin size={30} className="m-2" />
-                  <span className="m-2.5 text-lg sm:text-xl font-bold">
-                    {t("address")}
-                  </span>
+                  <span className="m-2.5  font-bold">{t("address")}</span>
                 </p>
-                <p className="mx-4 sm:mx-6">My City, My Country</p>
+                <p className="mx-4 sm:mx-6" style={languageStyles}>
+                  My City, My Country
+                </p>
               </div>
               <div className="py-2">
-                <p className="flex">
-                  <span className="m-2.5 text-lg sm:text-xl font-bold">
+                <p className="flex" style={languageStyles}>
+                  <span className="m-2.5 font-bold">
                     {t("customerServiceTimings")}
                   </span>
                 </p>
-                <p className="mx-4 sm:mx-6">{t("timings")}</p>
+                <p className="mx-4 sm:mx-6" style={languageStyles}>
+                  {t("timings")}
+                </p>
               </div>
             </div>
           </div>
@@ -149,7 +177,9 @@ function Contact(props) {
         </div>
       </div>
       <div className="pt-20">
-        <p className="text-xs text-center mb-6">{t("gotQuestions")}</p>
+        <p className=" text-center mb-6" style={languageStyles}>
+          {t("gotQuestions")}
+        </p>
         <h1 className="text-center text-4xl font-extrabold my-3">
           {t("contactForm")}
         </h1>
@@ -159,21 +189,26 @@ function Contact(props) {
           <h2 className="text-3xl font-extrabold text-center mb-4">
             {t("writeToUs")}
           </h2>
-          <p className="text-xs text-center mb-6">{t("fillForm")}</p>
+          <p className=" text-center mb-6" style={languageStyles}>
+            {t("fillForm")}
+          </p>
           {isSubmitted && (
-            <div className="text-center text-green-500">
+            <div className="text-center text-green-500" style={languageStyles}>
               {t("receivedMessage")}
             </div>
           )}
           {isError && (
-            <div className="text-center text-red-500">{t("submitError")}</div>
+            <div className="text-center text-red-500" style={languageStyles}>
+              {t("submitError")}
+            </div>
           )}
           {!isSubmitted && (
             <form ref={form} onSubmit={handleSubmit}>
               <div className="mb-4">
                 <label
                   htmlFor="name"
-                  className="block text-sm font-medium text-gray-700"
+                  className="block  font-medium text-gray-700"
+                  style={languageStyles}
                 >
                   {t("name")}
                 </label>
@@ -196,7 +231,8 @@ function Contact(props) {
               <div className="mb-4">
                 <label
                   htmlFor="email"
-                  className="block text-sm font-medium text-gray-700"
+                  className="block font-medium text-gray-700"
+                  style={languageStyles}
                 >
                   {t("email")}
                 </label>
@@ -219,7 +255,8 @@ function Contact(props) {
               <div className="mb-4">
                 <label
                   htmlFor="message"
-                  className="block text-sm font-medium text-gray-700"
+                  className="block  font-medium text-gray-700"
+                  style={languageStyles}
                 >
                   {t("message")}
                 </label>
@@ -235,14 +272,15 @@ function Contact(props) {
                   rows={7}
                   onChange={handleChange}
                   onBlur={handleBlur}
-                  className="mt-1 p-2 block w-full border border-gray-300 rounded-md shadow-sm sm:text-sm"
+                  className="mt-1 p-2 block w-full border border-gray-300 rounded-md shadow-sm "
                   required
                 />
               </div>
               <div className="text-center">
                 <button
                   type="submit"
-                  className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-neutral"
+                  className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-white bg-neutral"
+                  style={languageStyles}
                 >
                   {t("sendMessage")}
                 </button>

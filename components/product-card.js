@@ -9,6 +9,7 @@ import { addselectedProduct } from "../redux/slices/productSlice";
 import { addcartProducts } from "../redux/slices/cartSlice";
 import { useDispatch, useSelector } from "react-redux";
 import Toast from "./Toast";
+import { useTranslation } from "react-i18next";
 
 const ProductCard = ({
   productTitle,
@@ -29,6 +30,7 @@ const ProductCard = ({
   const [showToast, setShowToast] = useState(false);
   const router = useRouter();
   const user = useSelector((state) => state.auth.user);
+ const { t } = useTranslation("common");
 
   const handleSeeDetailsClick = () => {
     dispatch(
@@ -125,33 +127,33 @@ const ProductCard = ({
           </div>
           <div className="card-actions ">
             <Link
-              href={`/products/${productID + productTitle}`}
+              href={`/products/${productID+productTitle}`}
               className="btn btn-active btn-sm w-full"
             >
               <button
                 className="btn btn-active btn-xs w-full"
                 onClick={handleSeeDetailsClick}
               >
-                See Details
+            {t("seeDetails")}
               </button>
             </Link>
             <a onClick={AddToCart} className="btn btn-active btn-sm w-full">
               <button className="btn btn-active btn-xs">
                 <FaShoppingCart fontSize={20} onClick={AddToCart} />
-                Add to Cart
+                {t("addToCart")}
               </button>
             </a>
             {user ? (
               <></>
             ) : (
               <>
-                <p className="text-xs text-center">Login to add to cart</p>
+                <p className="text-xs text-center"> {t("loginToAdd")}</p>
               </>
             )}
           </div>
         </div>
       </div>
-      {showToast && <Toast message="Product Added to the Cart" />}
+      {showToast && <Toast message={t("productAddedToCart")} />}
     </div>
   );
 };

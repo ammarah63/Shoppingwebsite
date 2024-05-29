@@ -89,5 +89,25 @@
   "profileUpdatedToast": "پروفائل کامیابی کے ساتھ اپ ڈیٹ ہوگیا",
   "orderNumber": "آرڈر نمبر",
   "placedOn": "آرڈر کیا گیا",
-  "items": "اشیاء"
+  "items": "اشیاء",
+
+  "addToCart": "کارٹ میں ڈالیں",
+  "loginToAdd": "کارٹ میں شامل کرنے کے لیے لاگ ان کریں",
+  "productReviews": "مصنوعات کی جائزہ",
+  "stars": "ستارے",
+  "outOf": "پانچ میں سے",
+  "productTitle": "مصنوعات کا عنوان",
+  "productDescription": "تفصیل",
+  "productCategory": "قسم",
+  "productBrand": "برانڈ",
+  "color": "رنگ",
+  "size": "سائز",
+
+  "inStock": "موجودہ",
+  "deliveryDetails": "تفصیلات ترسیل",
+  "loginToAddCart": "کارٹ میں شامل کرنے کے لیے لاگ ان کریں",
+  "people": "لوگ",
+  "alsoPurchased": "بھی خریدا",
+  "productAddedToCart": "پروڈکٹ کارٹ میں شامل ہو گیا",
+  "seeDetails": "تفصیل دیکھیں"
 }
