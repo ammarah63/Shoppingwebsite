@@ -14,6 +14,8 @@ import { auth } from "@/firebaseConfig";
 import { clearUser } from "@/redux/slices/authSlice";
 import { clearCart } from "@/redux/slices/cartSlice";
 import { useTranslation } from "react-i18next";
+
+
 const Header = () => {
   const [cartNo, setCartNo] = useState(0);
   const dispatch = useDispatch();
